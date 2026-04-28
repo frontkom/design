@@ -1,5 +1,5 @@
 ---
-title: Design System — Frontkom (frontkom.com)
+title: Design System  Frontkom
 source_urls:
   - https://frontkom.com/
   - https://frontkom.com/blog/ki-i-skyggene
@@ -10,7 +10,7 @@ stack: Next.js + Tailwind v4 (utility-first, design tokens via CSS vars)
 # Design System: Frontkom
 
 **Project:** frontkom.com — corporate site + blog
-**Source:** Live site analysis (Next.js bundle `_next/static/chunks/af30de74c0620aa9.css`)
+**Source:** Live site analysis
 
 ## 1. Visual Theme & Atmosphere
 
