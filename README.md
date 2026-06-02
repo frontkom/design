@@ -1,60 +1,61 @@
-# Frontkom Design
+# Brand Design Repository
 
-Machine-readable design system for [frontkom.com](https://frontkom.com),
-following the open [DESIGN.md spec](https://github.com/google-labs-code/design.md)
-from Google Labs.
+Machine-readable design systems for multiple brands, following the open
+[DESIGN.md spec](https://github.com/google-labs-code/design.md) from Google Labs.
 
-Drop this file into any AI coding agent's context (Claude Code, Cursor,
-Stitch, Gemini CLI, GitHub Copilot) and it will generate UI that matches
-Frontkom's brand without further prompting.
+## Structure
 
-## Files
+- `Frontkom/DESIGN.md` — Frontkom design system.
+- `Frontkom/assets/` — Frontkom logos, fonts, images, exports.
+- `Tindre/DESIGN.md` — Tindre design system.
+- `Tindre/assets/` — Tindre logos, fonts, images, exports.
 
-- `DESIGN.md` — the design system itself. YAML tokens + prose rationale.
-- `assets/logo-frontkom.svg` — the wordmark, single-color, 560×107 viewBox.
-  All paths use `#35323C` (`{colors.foreground}`) so the logo inverts cleanly
-  on dark surfaces by setting `fill: var(--color-on-dark)`.
+## Validate a brand file
 
-## Validate
+Run from repo root with the target file path:
 
 ```sh
-npx @google/design.md lint DESIGN.md
+npx @google/design.md lint Frontkom/DESIGN.md
+npx @google/design.md lint Tindre/DESIGN.md
 ```
 
 Should report `errors: 0, warnings: 0`.
 
-## Export to Tailwind
+## Export tokens
+
+Example for Frontkom:
 
 ```sh
-npx @google/design.md export --format tailwind DESIGN.md > tailwind.theme.json
+npx @google/design.md export --format tailwind Frontkom/DESIGN.md > Frontkom/tailwind.theme.json
+npx @google/design.md export --format dtcg Frontkom/DESIGN.md > Frontkom/tokens.json
 ```
 
-Or to W3C DTCG `tokens.json`:
+Example for Tindre:
 
 ```sh
-npx @google/design.md export --format dtcg DESIGN.md > tokens.json
+npx @google/design.md export --format tailwind Tindre/DESIGN.md > Tindre/tailwind.theme.json
+npx @google/design.md export --format dtcg Tindre/DESIGN.md > Tindre/tokens.json
 ```
 
 ## Use with Claude Code / Cursor
 
-Put `DESIGN.md` at the project root. The agent will pick it up automatically.
-For Claude Code, you can also reference it explicitly from `CLAUDE.md`:
+Reference the brand-specific file in your project instructions:
 
 ```md
 ## Design system
 
-Always follow the rules in `DESIGN.md`. Run
-`npx @google/design.md lint DESIGN.md` after introducing new components to
-verify WCAG AA compliance.
+Always follow the rules in `Frontkom/DESIGN.md`.
+Run `npx @google/design.md lint Frontkom/DESIGN.md` after introducing
+new components to verify WCAG AA compliance.
 ```
+
+Use `Tindre/DESIGN.md` similarly when working on Tindre surfaces.
 
 ## Use with Stitch
 
-Generate the file natively in Stitch, or import this one via the Stitch
-canvas → Design system → Import DESIGN.md.
+Generate files natively in Stitch, or import the relevant brand file via
+Stitch canvas → Design system → Import DESIGN.md.
 
 ## Status
 
-`alpha` — both the DESIGN.md spec and this file are evolving. When the spec
-adds gradient and shadow tokens, this file should be updated to use them
-natively rather than documenting them in prose.
+`alpha` — both the DESIGN.md spec and these brand files are evolving.
