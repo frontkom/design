@@ -387,7 +387,11 @@ The header is the first thing the user meets and the only element consistent acr
 
 ### Typographic decoration
 
-The letter "t" and the word "tindre" appear quietly in the background as a design element. Always discreet, always italic and light, placed outside the focus area, color follows the background. Never carries information. Never use "tindre.ai" in decoration — only "t" or "tindre".
+The letter "t" and the word "tindre" appear quietly in the margins as a design element. Always discreet, always italic and light, color follows the background. Never carries information. Never use "tindre.ai" in decoration — only "t" or "tindre".
+
+**Strict rule: the decoration never sits behind or overlaps content.** It lives only in clear margin space — typically the bottom-right or bottom-left corner of a slide, page, or poster, where no headline, body text, image, or UI element will cross it. If there isn't enough empty margin to place it cleanly, leave it out. A slide without the decoration is always better than one where it sits under text.
+
+Reasonable placements: bottom corner of a presentation cover, edge of a banner, outside the content area on social posts. Never as a watermark behind a paragraph, never crossing a headline, never bleeding into a card or image.
 
 ---
 
