@@ -503,8 +503,10 @@ components:
 
 ## Logo usage — read this before generating any visual
 
-The Frontkom wordmark is `assets/logo-frontkom.svg`. **Do not reconstruct
-it.** Always reference, embed, or copy the actual SVG file from
+The Frontkom wordmark is `assets/logo-frontkom.svg`
+(canonical source: https://github.com/frontkom/design/blob/main/logo-frontkom.svg).
+**Do not reconstruct it, and never create variants of the logo.** Always
+reference, embed, or copy the actual SVG file from
 `assets/logo-frontkom.svg`. AI agents have a strong tendency to redraw
 logos from prose descriptions; the result is always wrong. If you cannot
 read the SVG file, leave a placeholder and tell the user — do not draw
@@ -543,15 +545,19 @@ the logo is the primary subject (see `logo-frame` component); for
 social media, posters, slides, app screens, and most other dark-canvas
 uses, place the inverted logo directly on the indigo background.
 
-Three SVG files are provided so agents don't have to manipulate paths:
+Three SVG files are the single source of truth — link to, embed, or copy
+these exact files. Never recreate the logo or make variants of it:
 
-- `assets/logo-frontkom.svg` — charcoal logo (full lockup) for **light backgrounds**
+- `assets/logo-frontkom.svg` — charcoal logo (full lockup) for **light backgrounds**.
+  Source: https://github.com/frontkom/design/blob/main/logo-frontkom.svg
 - `assets/logo-frontkom-on-dark.svg` — white logo (full lockup) for **indigo / dark
-  backgrounds**
+  backgrounds**.
+  Source: https://github.com/frontkom/design/blob/main/logo-frontkom-on-dark.svg
 - `assets/logo-frontkom-symbol-outlined.svg` — outlined version of the symbol
-  only (no wordmark), in soft grey strokes. Used as a giant decorative
-  element on statement slides (see Slides & presentations / Statement
-  slide). `viewBox="0 0 110 107"`.
+  only (no wordmark), in soft grey strokes. **Use very sparingly** — only as a
+  giant decorative element on statement slides (see Slides & presentations /
+  Statement slide). `viewBox="0 0 110 107"`.
+  Source: https://github.com/frontkom/design/blob/main/logo-frontkom-symbol-outlined.svg
 
 Pick the file that matches the background and use case; do not invert at runtime.
 
