@@ -15,11 +15,20 @@ colors:
   # ===== CANVASES (equal defaults) =====
   background: "#FFFFFF"         # Pure white — the editorial / web default.
   background-dark: "#1A0054"   # Deep Indigo. Pantone 2745 C. The brand / ad default.
+  background-dark-deep: "#12003B" # A shade deeper than background-dark, for the
+                                # button-brand hover state. 19.29:1 on white text.
   background-muted: "#F7F7F8"  # Soft Cloud — alternative section bg on web.
+  slide-statement-canvas: "#F7F7F8" # Alias of background-muted. Same value,
+                                # named so the role is visible at the call site:
+                                # the muted-grey canvas reserved for statement
+                                # slides (see components.slide-statement).
   # ===== FOREGROUND =====
   foreground: "#35323C"         # Charcoal Plum. Pantone 4287 C. Brand book p. 7.
   on-dark: "#FFFFFF"           # Primary text on background-dark.
   on-dark-muted: "#C8B5FF"     # Soft Lavender — secondary text & taglines on indigo.
+  surface-lavender: "#C8B5FF"  # Soft Lavender used as a light interactive surface
+                                # (button-on-dark hover). Same value as on-dark-muted,
+                                # named separately because the role differs.
   # Foreground levels — pre-blended on white for WCAG validation
   foreground-muted: "#5E5C66"  # Body paragraphs (~80% foreground on white).
   foreground-subtle: "#9A98A0" # Quotes & metadata only (~50% foreground on white).
@@ -27,6 +36,17 @@ colors:
   link: "#4F1BE5"              # Vivid Violet. Pantone 2090 C. Brand book p. 7.
   link-on-dark: "#C8B5FF"      # Soft Lavender. Same value as on-dark-muted but
                                 # documented separately because the role differs.
+  link-hover: "#3E15B4"        # Darkened Vivid Violet for text-link hover.
+                                # Replaces the earlier one-off reuse of gradient-4
+                                # in the interaction layer. 10.65:1 on white.
+  # ===== ACTION (primary CTA) =====
+  action: "#521CE4"            # Primary action / CTA violet. Same hue as the
+                                # gradient violet endpoint (gradient-5), promoted
+                                # to a named interaction role so buttons don't
+                                # reach into the decorative gradient stops.
+                                # 7.94:1 against white text — passes WCAG AA.
+  action-hover: "#3E15B4"      # Darkened action violet for primary-button hover.
+                                # Same value as link-hover; named per role.
   # ===== STATUS =====
   warning: "#FB1065"            # Hot Pink-Red. Pantone 213 C. Brand book p. 7.
   # ===== BORDERS =====
@@ -82,12 +102,12 @@ typography:
   h4:
     fontFamily: Red Hat Text
     fontSize: 25px
-    fontWeight: 700
+    fontWeight: 400        # small heading → regular; bold reads heavy at this size
     lineHeight: 1.3
   h5:
     fontFamily: Red Hat Text
     fontSize: 19px
-    fontWeight: 700
+    fontWeight: 400        # small heading → regular; distinguish from body by role, not weight
     lineHeight: 1.4
   # Poster heading — used in advertising and event materials. Larger letter
   # spacing, often set in ALL CAPS. See annonse-eksempelene.
@@ -132,7 +152,8 @@ spacing:
   "2xl": 48px
   "3xl": 64px
   "4xl": 96px
-  section-y: 96px
+  spacing-section-y: 96px      # Semantic layout value (vertical section rhythm),
+                               # not a primitive step on the xs–4xl scale.
   container-x: 16px
   container-x-md: 24px
   container-x-lg: 32px
@@ -184,40 +205,34 @@ components:
   # ===========================================================
   # BUTTONS
   # ===========================================================
-  # Solid orange pill with indigo text. The high-emphasis primary CTA.
-  # 5.79:1 contrast — passes WCAG AA, and indigo-on-orange echoes the brand
-  # book avatar logic (orange ground, inverted symbol — p. 6).
+  # PRIMARY — solid violet pill with white text. The high-emphasis primary
+  # CTA across web and slides. 7.94:1 — passes WCAG AA for normal text, so no
+  # compromise on text color (unlike orange, which forced dark text). Hover
+  # darkens. Replaces the former orange primary.
+  button-primary:
+    backgroundColor: "{colors.action}"
+    textColor: "{colors.on-dark}"
+    typography: "{typography.label}"
+    rounded: "{rounded.full}"
+    padding: 14px 24px
+  button-primary-hover:
+    backgroundColor: "{colors.action-hover}"
+    textColor: "{colors.on-dark}"
+    textDecoration: underline    # underline the label on hover
+  # SECONDARY — solid deep-indigo pill with white text. NOTE: the token is
+  # still named `button-brand` for continuity, but it no longer uses the
+  # brand orange — the orange button was retired from the set. Default is
+  # indigo (17.92:1); hover goes a shade deeper and underlines the label.
   button-brand:
-    backgroundColor: "{colors.brand}"
-    textColor: "{colors.background-dark}"
+    backgroundColor: "{colors.background-dark}"
+    textColor: "{colors.on-dark}"
     typography: "{typography.label}"
     rounded: "{rounded.full}"
     padding: 14px 24px
   button-brand-hover:
-    backgroundColor: "{colors.background-dark}"
+    backgroundColor: "{colors.background-dark-deep}"
     textColor: "{colors.on-dark}"
-  # Solid violet pill with white text. The alternative primary CTA, used
-  # when an orange button would be too loud for the section.
-  button-link:
-    backgroundColor: "{colors.link}"
-    textColor: "{colors.on-dark}"
-    typography: "{typography.label}"
-    rounded: "{rounded.full}"
-    padding: 14px 24px
-  button-link-hover:
-    backgroundColor: "{colors.gradient-4}"
-    textColor: "{colors.on-dark}"
-  # Charcoal pill with white text. Used in editorial sections where the
-  # CTA should sit quietly.
-  button-dark:
-    backgroundColor: "{colors.foreground}"
-    textColor: "{colors.background}"
-    typography: "{typography.label}"
-    rounded: "{rounded.full}"
-    padding: 14px 24px
-  button-dark-hover:
-    backgroundColor: "{colors.background-dark}"
-    textColor: "{colors.background}"
+    textDecoration: underline
   # White pill with charcoal text. Standard CTA on indigo sections.
   button-on-dark:
     backgroundColor: "{colors.background}"
@@ -226,8 +241,9 @@ components:
     rounded: "{rounded.full}"
     padding: 14px 24px
   button-on-dark-hover:
-    backgroundColor: "{colors.background-muted}"
+    backgroundColor: "{colors.surface-lavender}"
     textColor: "{colors.foreground}"
+    textDecoration: underline
 
   # ===========================================================
   # CARDS
@@ -397,7 +413,7 @@ components:
   # deliberate brand-stylistic choice but fall below WCAG AA large text
   # threshold — use sparingly, never for body copy.
   slide-statement:
-    backgroundColor: "{colors.background-muted}"
+    backgroundColor: "{colors.slide-statement-canvas}"
     textColor: "{colors.foreground}"
     typography: "{typography.h1}"
     padding: 96px
@@ -775,6 +791,11 @@ The brand book is unambiguous: **Red Hat Text Bold (700)** for headers,
 **Red Hat Text Regular (400)** for body. Sizes follow a 1.333 (4:3)
 ratio scale.
 
+Website refinement: the **small heading levels (`h4`, `h5`) use regular
+(400), not bold**. At those sizes bold reads heavy and cramped, and size
+plus placement already carry the hierarchy. Bold (700) stays on the
+larger headings `h1`–`h3`.
+
 The website extends this with one exception: **Red Hat Display 400** is
 used on the marketing hero H1 only, providing the canvas for the
 gradient text fill. This is a documented website-led deviation.
@@ -793,8 +814,11 @@ uppercase but is not a heading).
   hero, page titles in editorial mode, and the ad text-flow size.
 - **`h2`** — Red Hat Text 700, ~45px. Major section headings.
 - **`h3`** — Red Hat Text 700, ~34px. Article H2.
-- **`h4`** — Red Hat Text 700, ~25px. Subsection headings, quote blocks.
-- **`h5`** — Red Hat Text 700, ~19px. Card titles.
+- **`h4`** — Red Hat Text 400, ~25px. Subsection headings, quote blocks.
+  Regular weight (see the small-heading note above).
+- **`h5`** — Red Hat Text 400, ~19px. Card titles. Regular weight; since
+  this sits close to `body`, lean on size and placement — or uppercase /
+  tracking — to keep it reading as a heading.
 - **`poster`** — Red Hat Text 700, ~56px, slightly increased letter-
   spacing. Event posters and short ad headlines (often ALL CAPS).
 - **`lead`** — Red Hat Text 400, 22px. The "eye-catching intro" (brand
@@ -953,15 +977,17 @@ height: 6px;
 All buttons are pills (`rounded.full`) with `label` typography and flat
 color transitions at 150–200ms. No transforms.
 
-- **`button-brand`** — solid orange pill with indigo text. The high-
-  emphasis primary CTA. Hover shifts to indigo with white text — a
-  dramatic flip that mirrors the brand's two canvases.
-- **`button-link`** — solid violet pill with white text. The
-  alternative primary CTA, used when an orange button would be too loud.
-- **`button-dark`** — charcoal pill with white text. Used in editorial
-  sections where the CTA should sit quietly.
+- **`button-primary`** — solid violet pill (`action`, #521CE4) with white
+  text. The high-emphasis primary CTA across web and slides. White text
+  clears WCAG AA at 7.94:1, so no dark-text compromise. Hover darkens to
+  `action-hover` and underlines the label.
+- **`button-brand`** — solid deep-indigo pill with white text. The
+  secondary CTA. (Name kept for continuity; the orange button was retired,
+  so despite the name this no longer uses the brand orange.) Hover goes a
+  shade deeper (`background-dark-deep`) and underlines the label.
 - **`button-on-dark`** — white pill with charcoal text. Standard CTA on
-  indigo sections.
+  indigo sections. Hover fills with Soft Lavender (`surface-lavender`) and
+  underlines the label.
 
 ### Cards
 
@@ -1001,7 +1027,7 @@ color transitions at 150–200ms. No transforms.
 ### Layout chrome (web)
 
 - **`nav`** — white, 60px tall, `max-w-7xl`. Plain links plus a single
-  `button-brand` CTA on the right. Includes the NO/EN language toggle.
+  `button-primary` CTA on the right. Includes the NO/EN language toggle.
 - **`footer`** — `background-dark` with `on-dark` text. Four-column
   desktop grid. Includes the Miljøfyrtårn certification badge — a
   real-world trust signal that's part of the brand.
@@ -1165,11 +1191,23 @@ each have a paired emphasis color:
 Mix in 1–2 photo cards (rounded `rounded.2xl`) at the same dimensions
 to break the monotony.
 
-Note on contrast: the emphasis colors don't pass WCAG AA against the
-pastel fills as full body copy, which is why bulk body text uses
-`foreground`. Emphasis is reserved for **bold key phrases at h5 size
-or larger** — at that size and weight they qualify as Large Text under
-WCAG AA, and visually they read as accents, not paragraphs.
+Note on contrast (measured against each pastel fill):
+
+- `slide-card-lavender` — `link` violet on `pastel-lavender` is **6.77:1**.
+  Passes WCAG AA even for normal-size body text; the safest pairing.
+- `slide-card-pink` — `gradient-3` magenta on `pastel-pink` is **4.04:1**.
+  Passes AA for Large Text (≥3:1) but fails for normal body text (4.5:1).
+  Use the emphasis color only on bold key phrases at `h5` size or larger.
+- `slide-card-peach` — `brand` orange on `pastel-peach` is **2.60:1**.
+  This fails AA even for Large Text (3:1). Do NOT rely on orange-on-peach
+  to carry meaning. Keep all readable content in `foreground` charcoal on
+  the peach card; treat the orange only as a purely decorative accent, or
+  swap the peach card's emphasis to a darker tone (e.g. `link` violet,
+  which clears 4.5:1 on peach).
+
+Across all three, bulk body text uses `foreground` charcoal — that's why
+the cards stay legible regardless of the emphasis color. The emphasis
+color is an accent, never the body copy.
 
 These pastels are deck-level variants, not locked brand tokens. A
 specific deck may use a different palette of three pastels if it suits
@@ -1270,6 +1308,11 @@ is reserved for the marketing hero H1).
   readability.
 - **Do** left-align all paragraph text. Center alignment is for short
   standalone elements only.
+- **Do** keep the brand orange tightly constrained on web. It fails WCAG
+  AA as normal text on white and is not a web button color, so reserve it
+  for large display headings, the gradient, and accents — not body text or
+  UI. White text on an orange button is permitted on slides only, where
+  WCAG AA doesn't apply (see Slide-specific).
 - **Don't** use the `logo-frame`, `poster-title`, or `gradient-bar`
   components on web. They're for advertising contexts.
 
@@ -1294,6 +1337,11 @@ is reserved for the marketing hero H1).
   The position is non-negotiable.
 - **Do** use `signature-highlight` (single orange phrase) for emphasis
   on slides — brand book p. 11: one highlighted phrase per page.
+- **Do** allow white text on an orange button in presentations. WCAG AA
+  is not required on slides the way it is on web, so this pairing is
+  permitted — even though white-on-orange (`#F86233`) sits at 3.09:1,
+  below the web contrast bar. This is a deliberate slide-only exception.
+  Orange otherwise stays sparing on slides; this is its one button use.
 - **Do** use the muted grey canvas (`background-muted`) only for
   statement slides, paired with the giant outlined Frontkom symbol
   (`logo-frontkom-symbol-outlined.svg`) bottom-right.
