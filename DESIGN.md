@@ -836,15 +836,26 @@ uppercase but is not a heading).
 
 ### Fluid sizing
 
-Token values are desktop maximums. Scale fluidly with `clamp()` for
-mobile — e.g. `clamp(40px, 6vw, 80px)` for hero. Don't use abrupt
+Token values are desktop maximums. On web, scale fluidly with `clamp()`
+for mobile — e.g. `clamp(40px, 6vw, 80px)` for hero. Don't use abrupt
 breakpoints.
+
+On fixed canvases (ads, posters, slides — e.g. a 1:1 social ad) there is
+no fluid range, so the headline must be **scaled down to fit the frame,
+and text must never be clipped or run off the edge.** Shrink the heading
+size (and re-wrap) until the longest line fits with margin to spare.
+Budget width for the longest word before locking a size — remember
+Norwegian runs ~10–15% longer than English, and ALL CAPS is wider than
+sentence case (e.g. "ORGANISASJONER"). If it still won't fit, reduce the
+size further or shorten the copy — never crop.
 
 ### Casing
 
 Sentence case for headings and body text by default. ALL CAPS is
-permitted only on the `poster` size for event titles, and on the
-`eyebrow` token. Title Case is not used.
+permitted only on the `poster` size for standalone event titles, and on
+the `eyebrow` token. Title Case is not used. Never mix cases within a
+single heading — in particular, a `gradient-flow-emphasis` headline is
+sentence case throughout; the gradient clause is NOT set in ALL CAPS.
 
 ## Layout
 
@@ -957,8 +968,32 @@ multiple lines.
 
 The original example: *"Lønnsom vekst **for ambisiøse bedrifter og
 organisasjoner**"* — first two words in solid white, the remaining
-phrase in gradient. The gradient progresses with reading order:
-top-down on multi-line, left-to-right on single-line.
+phrase in gradient.
+
+**It is ONE continuous heading, not two stacked elements.** The solid
+clause and the gradient clause share the same size, weight, and case —
+only the color changes between them. Set the whole thing in **sentence
+case**; never put the gradient clause (or any part of it) in ALL CAPS,
+and never enlarge one clause relative to the other. ALL CAPS belongs to
+`poster` event titles only (see Casing and `poster-title`), never to
+gradient-flow headlines.
+
+Geometry: apply the gradient as a single fill across the *entire*
+emphasis clause (one element), so the ramp reads continuously across the
+line breaks — don't fill each line separately. It progresses with
+reading order: top-down across multiple lines, left-to-right on a single
+line. Because it is one fill over the wrapped block, each line shows a
+slice of the ramp (top line orange-ish, bottom line violet) — that is
+intended.
+
+```css
+/* gradient clause only; the solid clause keeps its foreground color */
+background: linear-gradient(180deg, #F86233, #DA446E, #BC25A9, #861FCB, #521CE4);
+background-clip: text;
+-webkit-background-clip: text;
+color: transparent;
+/* single-line use → switch to linear-gradient(90deg, …) */
+```
 
 This is the strongest brand moment in advertising and works equally
 well on indigo and white. Use it when the message has a primary clause
@@ -1061,9 +1096,12 @@ media, posters, event materials. Don't use them on the website.
   - Narrow vertical (e.g. 180×500) — `rounded.3xl` rounded square.
   - In all cases: pure white fill, charcoal logo inside, padding
     proportional to the banner size.
-- **`poster-title`** — large bold title on indigo, often in ALL CAPS,
-  using the `poster` typography. Fills with `gradient-flow-emphasis`
-  for the brand moment ("BAKGÅRDSFEST").
+- **`poster-title`** — large bold title on indigo for **event posters
+  and short standalone event titles** (e.g. "BAKGÅRDSFEST"), using the
+  `poster` typography. This is the one place ALL CAPS is allowed on a
+  title, and it may take a gradient fill. Do NOT use `poster-title` for
+  sentence-style ad headlines like "Lønnsom vekst for ambisiøse
+  bedrifter …" — those are `gradient-flow-emphasis`, in sentence case.
 
 ### Process steps
 
