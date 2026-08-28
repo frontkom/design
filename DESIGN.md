@@ -58,9 +58,15 @@ colors:
   # they're a documented variant set for slide decks where multiple light cards
   # need visual differentiation. Don't use these on web; the web palette is
   # white + background-muted only.
-  pastel-lavender: "#F0E9FB"   # Light lavender — pairs with link / gradient-5 text
-  pastel-peach: "#FCE7DD"      # Light peach — pairs with brand text
-  pastel-pink: "#F8D9E5"       # Light pink — pairs with gradient-3 text
+  # Derived as 78% tints of the four brand gradient colors (gradient-2…5),
+  # so the fills share the brand's hue family and step clearly from one to
+  # the next. When several cards sit together, ALWAYS stack them light →
+  # dark in this gradient order (rose → magenta → purple → blue), never in
+  # a random order. Charcoal body text stays ≥8.4:1 on all four.
+  pastel-rose: "#F7D6DF"       # 78% tint of gradient-2 (#DA446E). Lightest.
+  pastel-magenta: "#F0CFEC"    # 78% tint of gradient-3 (#BC25A9).
+  pastel-purple: "#E4CEF4"     # 78% tint of gradient-4 (#861FCB).
+  pastel-blue: "#D9CDF9"       # 78% tint of gradient-5 (#521CE4). Darkest.
   # ===== BRAND GRADIENT (5-stop) =====
   # The signature gradient. Used as text fill, text-flow, decorative bars,
   # frame accents. Derived from brand book's 7-stop "color harmony" (p. 8),
@@ -157,14 +163,18 @@ spacing:
   container-x: 16px
   container-x-md: 24px
   container-x-lg: 32px
+# Corner radius. NOTE: the brand book does not define corner treatment —
+# there is no rule for it there. Rounded (not sharp) corners are chosen
+# because active material — presentations and the website — has used them
+# consistently over time, giving a soft expression that matches the soft,
+# organic forms in the logo symbol. Keep the rounding restrained: enough
+# to read as soft, never so much that it looks naive or unserious. This is
+# read-from-practice, not a brand-book value (cf. the colors, which cite
+# brand-book pages).
 rounded:
-  none: 0px
   sm: 8px
-  md: 12px
-  lg: 16px
   xl: 20px
-  "2xl": 28px
-  "3xl": 40px
+  xxl: 40px
   full: 9999px
 components:
   # ===========================================================
@@ -189,10 +199,14 @@ components:
     textColor: "{colors.brand}"
     typography: "{typography.h1}"
   # 3. Gradient bar — a thin horizontal stripe of the full 5-stop gradient,
-  # used as a decorative top/bottom border or section divider on indigo
-  # canvases. See Bakgårdsfest poster top edge.
+  # used as a decorative border along the TOP edge of a slide/section only
+  # (never the bottom). See Bakgårdsfest poster top edge. It is a SMOOTH
+  # continuous blend, not hard-edged color segments — see the CSS in
+  # Components / gradient-bar.
   gradient-bar:
-    backgroundColor: "{colors.brand}"
+    # FALLBACK ONLY — a single color field can't express the 5-stop gradient.
+    # Render the smooth linear-gradient from the CSS below, not this solid.
+    backgroundColor: "{colors.brand}"  # fallback; gradientStart=gradient-1, gradientEnd=gradient-5
     height: 6px
   # The decorative orange stripe — solid 4px × 64px pill. Used on web above
   # section openers as a quieter brand flourish (not the gradient bar).
@@ -261,7 +275,7 @@ components:
   card-dark:
     backgroundColor: "{colors.background-dark}"
     textColor: "{colors.on-dark}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.xl}"
     padding: 40px
 
   # ===========================================================
@@ -355,13 +369,13 @@ components:
   # The frame shape adapts to the banner aspect ratio:
   #   - Square / tall (580×500) → square diamond rotated 45°
   #   - Wide (980×300) → right-pointing arrow / pentagon
-  #   - Narrow vertical (180×500) → rounded square (rounded.3xl)
+  #   - Narrow vertical (180×500) → rounded square (rounded.xxl)
   # In all cases: pure white fill, charcoal logo inside, padding
   # proportional to the banner size.
   logo-frame:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.3xl}"
+    rounded: "{rounded.xxl}"
     padding: 32px 48px
   # Poster title — large bold text, often ALL CAPS, with gradient text fill
   # on indigo backgrounds. The "BAKGÅRDSFEST" treatment.
@@ -379,8 +393,8 @@ components:
   # Logo placement is ALWAYS bottom-right on content slides; cover slides
   # center the logo in the lower third.
 
-  # Cover slide — first slide of a deck. Indigo with gradient bars top and
-  # bottom, eyebrow + h1 + logo. See "Master sales slides" cover.
+  # Cover slide — first slide of a deck. Indigo with a gradient bar on the
+  # top edge only, eyebrow + h1 + logo. See "Master sales slides" cover.
   slide-cover:
     backgroundColor: "{colors.background-dark}"
     textColor: "{colors.on-dark}"
@@ -406,15 +420,17 @@ components:
   # Used for chapter openers like "Vi hjelper ambisiøse bedrifter å vokse",
   # "Hvordan kommer man i gang?", "Fragmenterte løsninger gir fragmenterte
   # kundereiser." See assets/logo-frontkom-symbol-outlined.svg for the
-  # outlined element. Text color is foreground for the bulk of the
-  # heading; key words can be set in brand orange for emphasis (like
+  # outlined element. Text color is background-dark (deep indigo #1A0054)
+  # for the bulk of the heading — NOT charcoal foreground; the indigo ties
+  # the light slide to the brand's dark canvas. Key words can be set in
+  # brand orange for emphasis (like
   # "**lønnsom**" and "**bærekraftig**" on s. 19). Pure-orange statement
   # headings exist (s. 17 "Vi hjelper ambisiøse bedrifter å vokse") as a
   # deliberate brand-stylistic choice but fall below WCAG AA large text
   # threshold — use sparingly, never for body copy.
   slide-statement:
     backgroundColor: "{colors.slide-statement-canvas}"
-    textColor: "{colors.foreground}"
+    textColor: "{colors.background-dark}"
     typography: "{typography.h1}"
     padding: 96px
   # Section eyebrow — orange "Master sales slides" / "Om Frontkom" identifier
@@ -426,25 +442,36 @@ components:
 
   # Info-card grid cards — pastel-filled rounded rectangles used in
   # multi-card slide layouts (e.g. "Kort om disse slidene" on slide 2).
-  # Three variants by fill, each pairing with a different emphasis color
-  # for KEY WORDS within the body text (the bulk of body text is
-  # foreground charcoal for legibility). These are deck-level variants,
-  # not locked brand tokens.
-  slide-card-lavender:
-    backgroundColor: "{colors.pastel-lavender}"
+  # Four fills, derived from the brand gradient (gradient-2…5). When
+  # several sit together, stack them light → dark in gradient order:
+  # rose → magenta → purple → blue. Body text is full-strength foreground
+  # charcoal — NEVER foreground-muted grey, which looks washed on the
+  # pastel fills. Content is TOP-aligned (verticalAlign: top) — never
+  # vertically centered. Deck-level variants, not locked brand tokens.
+  slide-card-rose:
+    backgroundColor: "{colors.pastel-rose}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.xl}"
     padding: 32px
-  slide-card-peach:
-    backgroundColor: "{colors.pastel-peach}"
+    verticalAlign: top
+  slide-card-magenta:
+    backgroundColor: "{colors.pastel-magenta}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.xl}"
     padding: 32px
-  slide-card-pink:
-    backgroundColor: "{colors.pastel-pink}"
+    verticalAlign: top
+  slide-card-purple:
+    backgroundColor: "{colors.pastel-purple}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.xl}"
     padding: 32px
+    verticalAlign: top
+  slide-card-blue:
+    backgroundColor: "{colors.pastel-blue}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.xl}"
+    padding: 32px
+    verticalAlign: top
 
   # Speech bubble — comic-style callout used to highlight a key remark.
   # Indigo bubble with white text (default), or white bubble with charcoal
@@ -453,12 +480,12 @@ components:
   slide-bubble-dark:
     backgroundColor: "{colors.background-dark}"
     textColor: "{colors.on-dark}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.xl}"
     padding: 24px 32px
   slide-bubble-light:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.2xl}"
+    rounded: "{rounded.xl}"
     padding: 24px 32px
 
   # ===========================================================
@@ -916,8 +943,8 @@ The system is **flat**. No drop shadows. Depth comes from:
    `background` / `background-muted` / `background-dark` on web.
 2. **Border accents** — `border` outlines on light cards;
    `border-on-dark` for subtle indigo hierarchy.
-3. **Corner radius** — `rounded.xl` and `rounded.2xl` create softness
-   without shadow.
+3. **Corner radius** — `rounded.xl` (and `rounded.xxl` on the logo
+   frame) create softness without shadow.
 4. **Outlined symbol elements** (brand book p. 17) — outlined versions
    of the Frontkom symbol can be placed partially off-canvas as
    atmospheric depth devices.
@@ -928,11 +955,11 @@ If `box-shadow` feels needed, increase contrast or radius instead.
 
 - **Actions** — always `rounded.full` (pill). Buttons, tags, language
   toggle. No square corners on interactive elements.
-- **Cards** — `rounded.xl` (20px) standard, `rounded.2xl` (28px) for
-  hero cards.
+- **Cards** — `rounded.xl` (20px), the same on web and slides. Kept
+  deliberately restrained — soft, never so round it looks naive.
 - **Inputs** — `rounded.sm` (8px). The only place where shape softens
   but doesn't go fully round.
-- **Logo frame (advertising only)** — `rounded.3xl` (40px) when
+- **Logo frame (advertising only)** — `rounded.xxl` (40px) when
   rendered as a rounded square; full diamond / arrow shapes are SVG-
   drawn paths matching the symbol geometry.
 - **The symbol** — the Frontkom logo symbol uses a stylised geometric
@@ -1004,9 +1031,15 @@ once.
 #### 3. `gradient-bar` — gradient stripe
 
 A thin horizontal stripe of the full 5-stop gradient, used as a
-decorative top edge or section divider, primarily on indigo. See the
-top edge of the Bakgårdsfest poster — a single 6px stripe spanning
-the full width does the work of a frame.
+decorative border along the **top edge only** of a slide or poster.
+Never place it at the bottom of a slide, and never on both edges — it is
+a top accent. See the top edge of the Bakgårdsfest poster — a single 6px
+stripe spanning the full width does the work of a frame.
+
+It must be a **smooth, continuous blend** — the colors flow into one
+another with no hard stops. Do NOT render it as five equal solid blocks
+or a segmented / banded stripe. Use the CSS below verbatim (even 90°
+distribution, no explicit stop percentages):
 
 ```css
 background: linear-gradient(90deg, #F86233, #DA446E, #BC25A9, #861FCB, #521CE4);
@@ -1036,7 +1069,7 @@ color transitions at 150–200ms. No transforms.
   Workhorse. `rounded.xl`, 32px padding.
 - **`card-light-bordered`** — white fill with 1px `border`, for cards
   on `background-muted` sections where contrast is needed.
-- **`card-dark`** — `background-dark` fill, white text, `rounded.2xl`,
+- **`card-dark`** — `background-dark` fill, white text, `rounded.xl`,
   40px padding.
 
 ### Editorial
@@ -1093,7 +1126,7 @@ media, posters, event materials. Don't use them on the website.
   use a frame. The frame shape adapts to the banner aspect ratio:
   - Square / tall (e.g. 580×500) — full square diamond rotated 45°.
   - Wide (e.g. 980×300) — right-pointing arrow / pentagon.
-  - Narrow vertical (e.g. 180×500) — `rounded.3xl` rounded square.
+  - Narrow vertical (e.g. 180×500) — `rounded.xxl` rounded square.
   - In all cases: pure white fill, charcoal logo inside, padding
     proportional to the banner size.
 - **`poster-title`** — large bold title on indigo for **event posters
@@ -1134,14 +1167,65 @@ grey canvas (`background-muted`) is reserved for **statement slides**
 slides — for embedded screenshots, mockups, and the occasional info
 card — but is not a standalone slide background.
 
+### Slide layouts in the .pptx theme
+
+The three canonical slide types must exist as **real layouts in the
+deck's theme** (slide masters), not as formatting applied to individual
+slides. A deck where indigo is painted per-slide breaks the moment
+someone inserts a new slide or copies one into another file: they get a
+white canvas and have to rebuild the brand by hand.
+
+| Layout name | Maps to component | Canvas | Fixed elements |
+|---|---|---|---|
+| `Frontkom forside` | `slide-cover` | `background-dark` | Gradient bar, top edge; white logo centered in lower third |
+| `Frontkom mørk side` | `slide-content` | `background-dark` | White logo bottom-right |
+| `Frontkom lys side` | `slide-statement` | `background-muted` | Charcoal logo bottom-right |
+
+The two remaining slide types are variants on the dark layout: chapter
+dividers and closing / CTA slides both build on `Frontkom mørk side`, so
+these three theme layouts cover all five slide types.
+
+**Background and logo live on the layout, never on the slide.** This is
+what makes duplication and insertion safe, and it's the only way the
+logo stays in its non-negotiable position without relying on discipline.
+
+Placeholders per layout:
+
+- `Frontkom forside` — eyebrow, title, subtitle
+- `Frontkom mørk side` — eyebrow, title
+- `Frontkom lys side` — title
+
+#### Two rules that are easy to get wrong
+
+**Every placeholder a layout declares must be filled by the slides using
+it.** PowerPoint draws the prompt text ("Klikk for å legge til tekst")
+for any placeholder a slide leaves empty, and it lands on top of
+whatever the slide already contains. Slide text must be written *into*
+the placeholder, not into a separate text box positioned over it. If a
+layout needs a slot that most slides won't use, leave it out — the
+content slide is a free canvas below the title, not a body-text
+template.
+
+**Title placeholders must set left alignment explicitly.** PowerPoint's
+built-in title placeholder centers by default, and a title inherits that
+unless the layout overrides it. Every heading in this system is
+left-aligned.
+
+#### Copying slides between decks
+
+A slide pasted into another presentation adopts the destination theme
+unless the person chooses *Keep source formatting* — the branded canvas
+reverts to white. This is PowerPoint behaviour and cannot be designed
+around; note it when handing a deck over.
+
 ### Slide types
 
 Five canonical slide types cover almost every deck:
 
 #### 1. Cover slide
 
-The first slide. Indigo canvas with **a gradient bar at the top edge
-and a matching one at the bottom edge**, framing the canvas. Centered
+The first slide. Indigo canvas with **a gradient bar on the top edge**
+(the cover is the one slide that carries the gradient bar). Centered
 or left-aligned composition with:
 
 - An eyebrow in `brand` orange (e.g. "A part of the Frontkom Value
@@ -1186,10 +1270,13 @@ Composition rules:
 - Canvas: `background-muted` (`#F7F7F8`)
 - Heading: `h1`-sized, **left-aligned in the middle-left of the
   slide** (not top, not centered)
-- Heading text color: `foreground` for the bulk of the heading;
-  emphasis words in **bold** `brand` orange ("Hva mener vi med
-  **lønnsom** og **bærekraftig** vekst?"). This is the canonical
-  pattern.
+- Heading text color: **`background-dark` deep indigo (`#1A0054`)** for
+  the bulk of the heading — not charcoal `foreground`. On a light slide
+  canvas the dark heading text is always indigo: it ties the slide to the
+  brand's dark canvas and reads more branded than a neutral grey (and it's
+  higher contrast — 16.74:1 on the muted canvas). Emphasis words in
+  **bold** `brand` orange ("Hva mener vi med **lønnsom** og
+  **bærekraftig** vekst?"). This is the canonical pattern.
 - Pure-orange statement headings exist in the deck (s. 17 "Vi hjelper
   ambisiøse bedrifter å vokse", s. 21 "Synes du det er lett å være en
   god innkjøper...", s. 37 "Fragmenterte løsninger gir fragmenterte
@@ -1201,7 +1288,12 @@ Composition rules:
   bottom-right area, partially clipped off the canvas edge. Use
   `assets/logo-frontkom-symbol-outlined.svg` scaled to roughly 60–70%
   of the slide height, positioned with its right edge extending
-  beyond the canvas right edge.
+  beyond the canvas right edge. Render it in **soft lavender
+  (`on-dark-muted`, #C8B5FF) at low opacity on a dark / indigo canvas** —
+  that is where this device belongs. Avoid the grey-outline-on-light
+  treatment: on a pale background the stray wireframe reads as an
+  unfinished artifact, not a brand device. If the slide is light, either
+  drop the symbol or keep it extremely faint.
 - Charcoal Frontkom wordmark logo bottom-right (small, sitting on top
   of or near the outlined symbol)
 
@@ -1220,43 +1312,58 @@ Use `slide-content` with CTA composition.
 
 #### Info-card grid (slide 2–3 of master deck)
 
-A 3×2 or 2×3 grid of pastel-filled cards. Each card holds 2–4 lines of
-body text in `foreground` charcoal for legibility, with key phrases
-set in **bold** in the card's *emphasis color*. The three pastel fills
-each have a paired emphasis color:
+A grid of pastel-filled cards. Each card holds 2–4 lines of body text in
+full-strength `foreground` charcoal — never `foreground-muted` grey,
+which looks washed and muddy on the pastel fills — with key phrases set
+in **bold** in the card's *emphasis color*.
 
-- `slide-card-lavender` — `pastel-lavender` (`#F0E9FB`) bg; emphasis
-  in `link` violet (`#4F1BE5`)
-- `slide-card-peach` — `pastel-peach` (`#FCE7DD`) bg; emphasis in
-  `brand` orange (`#F86233`)
-- `slide-card-pink` — `pastel-pink` (`#F8D9E5`) bg; emphasis in
-  `gradient-3` magenta (`#BC25A9`)
+**Top-align the content in every card — never vertically center it.**
+Each card sets `verticalAlign: top`: the heading starts at the top padding
+and text flows down from there, so the headings line up across the row.
+Vertical centering is the most common mistake here — cards hold different
+amounts of copy, so centering pushes each heading to a different height
+and the row looks ragged. Equal card heights are fine; the content still
+starts at the top, not the middle.
 
-Mix in 1–2 photo cards (rounded `rounded.2xl`) at the same dimensions
+The four fills are 78% tints of the brand gradient (gradient-2…5). When
+several cards sit together, **always stack them light → dark in gradient
+order** — rose, magenta, purple, blue — never a random arrangement. Each
+pairs with its parent hue as the emphasis color:
+
+- `slide-card-rose` — `pastel-rose` (`#F7D6DF`) bg; emphasis in
+  `gradient-2` rose (`#DA446E`). Lightest.
+- `slide-card-magenta` — `pastel-magenta` (`#F0CFEC`) bg; emphasis in
+  `gradient-3` magenta (`#BC25A9`).
+- `slide-card-purple` — `pastel-purple` (`#E4CEF4`) bg; emphasis in
+  `gradient-4` purple (`#861FCB`).
+- `slide-card-blue` — `pastel-blue` (`#D9CDF9`) bg; emphasis in
+  `gradient-5` blue-violet (`#521CE4`). Darkest.
+
+Mix in 1–2 photo cards (rounded `rounded.xl`) at the same dimensions
 to break the monotony.
 
-Note on contrast (measured against each pastel fill):
+Note on contrast (emphasis = parent hue, measured on each fill):
 
-- `slide-card-lavender` — `link` violet on `pastel-lavender` is **6.77:1**.
-  Passes WCAG AA even for normal-size body text; the safest pairing.
-- `slide-card-pink` — `gradient-3` magenta on `pastel-pink` is **4.04:1**.
-  Passes AA for Large Text (≥3:1) but fails for normal body text (4.5:1).
-  Use the emphasis color only on bold key phrases at `h5` size or larger.
-- `slide-card-peach` — `brand` orange on `pastel-peach` is **2.60:1**.
-  This fails AA even for Large Text (3:1). Do NOT rely on orange-on-peach
-  to carry meaning. Keep all readable content in `foreground` charcoal on
-  the peach card; treat the orange only as a purely decorative accent, or
-  swap the peach card's emphasis to a darker tone (e.g. `link` violet,
-  which clears 4.5:1 on peach).
+- `slide-card-blue` — `gradient-5` on `pastel-blue` is **5.3:1**. Passes
+  AA for normal text; the strongest pairing.
+- `slide-card-purple` — `gradient-4` on `pastel-purple` is **4.7:1**.
+  Passes AA for normal text.
+- `slide-card-magenta` — `gradient-3` on `pastel-magenta` is **3.7:1**.
+  Large Text only — keep the emphasis to bold headings (`h5`+), not body.
+- `slide-card-rose` — `gradient-2` on `pastel-rose` is **3.1:1**. The
+  weakest — only clears Large Text; keep the rose emphasis to short bold
+  headings, or darken it (e.g. to `gradient-4` purple) if you need more.
 
-Across all three, bulk body text uses `foreground` charcoal — that's why
-the cards stay legible regardless of the emphasis color. The emphasis
-color is an accent, never the body copy.
+Because each emphasis sits on its own hue's tint, the two warm fills
+(rose, magenta) have modest contrast — fine for a bold card heading, not
+for running text. Body copy is always `foreground` charcoal (≥8.4:1 on
+all four), which is what keeps every card legible.
 
-These pastels are deck-level variants, not locked brand tokens. A
-specific deck may use a different palette of three pastels if it suits
-the topic — but always three colors, always paired with a matching
-emphasis color, never used solo.
+These pastels are deck-level variants, not locked brand tokens, but they
+now derive straight from the brand gradient, so prefer them as given. Use
+three or four per layout, always stacked light → dark in gradient order
+(rose → magenta → purple → blue), always paired with a matching emphasis
+color, never used solo.
 
 #### Speech bubbles
 
@@ -1307,7 +1414,7 @@ is reserved for the marketing hero H1).
   (poster device) inside content slides — except on the cover slide,
   where gradient bars frame the canvas.
 - They don't use `card-light` or `card-dark` web cards — use the slide
-  card variants (`slide-card-lavender` / `peach` / `pink`) instead.
+  card variants (`slide-card-rose` / `magenta` / `purple` / `blue`) instead.
 
 ## Do's and Don'ts
 
@@ -1396,6 +1503,9 @@ is reserved for the marketing hero H1).
   *means* "process / time / change" (brand book p. 8).
 - **Do** include an orange eyebrow at the top-left of content slides
   to identify the deck section ("Master sales slides", "Om Frontkom").
+- **Don't** vertically center the content inside info cards or columns.
+  Top-align it (`verticalAlign: top`) so headings line up across the row;
+  centering makes the tops sit at different heights and looks ragged.
 - **Don't** use `hero-gradient` text fill on slide headings — gradient
   text fill is web-only. Use `signature-highlight` instead.
 - **Don't** put the logo anywhere except bottom-right on content
@@ -1406,8 +1516,8 @@ is reserved for the marketing hero H1).
   bars appear in a deck — framing the canvas top and bottom.
 - **Don't** use Red Hat Display on slides. Display is reserved for
   the marketing hero H1 on web.
-- **Don't** use the pastel slide cards (`pastel-lavender`,
-  `pastel-peach`, `pastel-pink`) on web. They're for slide info-card
+- **Don't** use the pastel slide cards (`pastel-rose`, `pastel-magenta`,
+  `pastel-purple`, `pastel-blue`) on web. They're for slide info-card
   grids only.
 - **Don't** combine `hero-gradient` with `signature-highlight` on the
   same surface. Pick one register.
