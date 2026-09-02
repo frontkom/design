@@ -30,7 +30,9 @@ colors:
                                 # (button-on-dark hover). Same value as on-dark-muted,
                                 # named separately because the role differs.
   # Foreground levels — pre-blended on white for WCAG validation
-  foreground-muted: "#5E5C66"  # Body paragraphs (~80% foreground on white).
+  foreground-muted: "#5E5C66"  # Web / long-form body paragraphs (~80% foreground
+                                # on white). NOT for pastel info cards or slide
+                                # cards — those use full `foreground` charcoal.
   foreground-subtle: "#9A98A0" # Quotes & metadata only (~50% foreground on white).
   # ===== LINKS =====
   link: "#4F1BE5"              # Vivid Violet. Pantone 2090 C. Brand book p. 7.
@@ -172,10 +174,12 @@ spacing:
 # read-from-practice, not a brand-book value (cf. the colors, which cite
 # brand-book pages).
 rounded:
-  sm: 8px
-  xl: 20px
-  xxl: 40px
-  full: 9999px
+  sm: 8px      # input fields
+  md: 12px     # small elements (colour swatches, tags, chips, thumbnails), and
+               # any element nested inside a card — one step down from the card's
+               # 20px so the two surfaces read as separate, not merged into one.
+  xl: 20px     # cards and panels
+  full: 9999px # buttons, and pill / dot shapes (badges, process steps, stripe)
 components:
   # ===========================================================
   # GRADIENT TREATMENTS (the signature device, three forms)
@@ -366,16 +370,26 @@ components:
   # surfaces — social media, posters, slides, app UI — place the inverted
   # white logo DIRECTLY on the indigo background. Do not add a frame.
   # See "Logo on indigo" in the top-of-file logo-usage section.
-  # The frame shape adapts to the banner aspect ratio:
-  #   - Square / tall (580×500) → square diamond rotated 45°
-  #   - Wide (980×300) → right-pointing arrow / pentagon
-  #   - Narrow vertical (180×500) → rounded square (rounded.xxl)
-  # In all cases: pure white fill, charcoal logo inside, padding
-  # proportional to the banner size.
-  logo-frame:
+  # The frame is a pure-white shape holding the charcoal logo, padding
+  # proportional to the banner. Which SHAPE depends on the banner aspect
+  # ratio — so there are three sibling tokens, one per shape. Pick the one
+  # that matches the format; don't reshape a single token. Only the rounded
+  # variant uses a CSS `rounded` value — diamond and arrow are SVG paths.
+  logo-frame-diamond:      # Square / tall banners (e.g. 580×500)
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.xxl}"
+    shape: diamond         # a square rotated 45°; drawn as an SVG path, not a radius
+    padding: 32px 48px
+  logo-frame-arrow:        # Wide banners (e.g. 980×300)
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    shape: arrow           # right-pointing arrow / pentagon; SVG path, not a radius
+    padding: 32px 48px
+  logo-frame-rounded:      # Narrow vertical banners (e.g. 180×500)
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    shape: rounded-square
+    rounded: "{rounded.xl}"
     padding: 32px 48px
   # Poster title — large bold text, often ALL CAPS, with gradient text fill
   # on indigo backgrounds. The "BAKGÅRDSFEST" treatment.
@@ -390,8 +404,9 @@ components:
   # Slides have their own composition rules distinct from web and posters.
   # Standard slide aspect ratio is 16:9 (1920×1080). Two canvas variants:
   # indigo (default) and muted (#F7F7F8, for statement slides only).
-  # Logo placement is ALWAYS bottom-right on content slides; cover slides
-  # center the logo in the lower third.
+  # Logo placement is ALWAYS bottom-right on content slides; on the cover
+  # the logo sits in the lower third, aligned with the title — left if the
+  # title is left-aligned, centered only when the whole composition is.
 
   # Cover slide — first slide of a deck. Indigo with a gradient bar on the
   # top edge only, eyebrow + h1 + logo. See "Master sales slides" cover.
@@ -445,30 +460,35 @@ components:
   # Four fills, derived from the brand gradient (gradient-2…5). When
   # several sit together, stack them light → dark in gradient order:
   # rose → magenta → purple → blue. Body text is full-strength foreground
-  # charcoal — NEVER foreground-muted grey, which looks washed on the
-  # pastel fills. Content is TOP-aligned (verticalAlign: top) — never
-  # vertically centered. Deck-level variants, not locked brand tokens.
+  # charcoal — NEVER foreground-muted grey. The card HEADING and any
+  # key-word emphasis take the card's own `emphasisColor` (its parent
+  # gradient hue) — NOT charcoal. Content is TOP-aligned (verticalAlign:
+  # top), never vertically centered. Deck-level variants, not locked tokens.
   slide-card-rose:
     backgroundColor: "{colors.pastel-rose}"
     textColor: "{colors.foreground}"
+    emphasisColor: "{colors.gradient-2}"
     rounded: "{rounded.xl}"
     padding: 32px
     verticalAlign: top
   slide-card-magenta:
     backgroundColor: "{colors.pastel-magenta}"
     textColor: "{colors.foreground}"
+    emphasisColor: "{colors.gradient-3}"
     rounded: "{rounded.xl}"
     padding: 32px
     verticalAlign: top
   slide-card-purple:
     backgroundColor: "{colors.pastel-purple}"
     textColor: "{colors.foreground}"
+    emphasisColor: "{colors.gradient-4}"
     rounded: "{rounded.xl}"
     padding: 32px
     verticalAlign: top
   slide-card-blue:
     backgroundColor: "{colors.pastel-blue}"
     textColor: "{colors.foreground}"
+    emphasisColor: "{colors.gradient-5}"
     rounded: "{rounded.xl}"
     padding: 32px
     verticalAlign: top
@@ -568,7 +588,7 @@ When the logo sits on `background-dark` or any other dark surface, it
 must be rendered in white. **The default is white logo directly on
 indigo, not a white frame containing a charcoal logo.** A white pill
 or diamond frame is reserved for specific advertising layouts where
-the logo is the primary subject (see `logo-frame` component); for
+the logo is the primary subject (see the `logo-frame-*` components); for
 social media, posters, slides, app screens, and most other dark-canvas
 uses, place the inverted logo directly on the indigo background.
 
@@ -770,9 +790,12 @@ Three text-color tiers on white, achieved by varying alpha. Pre-computed
 values are provided for WCAG validation:
 
 - **`foreground` `#35323C`** — headlines and high-priority text. WCAG AA
-  passes 12.6:1 on white.
-- **`foreground-muted` `#5E5C66`** (≈80%) — body paragraphs. AA passes
-  6.4:1.
+  passes 12.6:1 on white. Exception: on pastel info cards the heading and
+  key-word emphasis take the card's `emphasisColor` (its gradient hue),
+  not charcoal.
+- **`foreground-muted` `#5E5C66`** (≈80%) — web / long-form body
+  paragraphs. AA passes 6.4:1. Not for pastel info cards or slide cards —
+  those keep body text in full `foreground` charcoal.
 - **`foreground-subtle` `#9A98A0`** (≈50%) — quotes and metadata only.
   Below AA for paragraph text, by design.
 
@@ -943,8 +966,8 @@ The system is **flat**. No drop shadows. Depth comes from:
    `background` / `background-muted` / `background-dark` on web.
 2. **Border accents** — `border` outlines on light cards;
    `border-on-dark` for subtle indigo hierarchy.
-3. **Corner radius** — `rounded.xl` (and `rounded.xxl` on the logo
-   frame) create softness without shadow.
+3. **Corner radius** — `rounded.xl` (cards, panels, and the logo frame)
+   creates softness without shadow.
 4. **Outlined symbol elements** (brand book p. 17) — outlined versions
    of the Frontkom symbol can be placed partially off-canvas as
    atmospheric depth devices.
@@ -959,7 +982,12 @@ If `box-shadow` feels needed, increase contrast or radius instead.
   deliberately restrained — soft, never so round it looks naive.
 - **Inputs** — `rounded.sm` (8px). The only place where shape softens
   but doesn't go fully round.
-- **Logo frame (advertising only)** — `rounded.xxl` (40px) when
+- **Small & nested elements** — `rounded.md` (12px). Colour swatches,
+  tags, chips, thumbnails, and anything sitting *inside* a card. Radius
+  steps down as surfaces nest: an element inside a card takes 12px, never
+  the card's own 20px, so the two surfaces read as separate rather than
+  merging into one.
+- **Logo frame (advertising only)** — `rounded.xl` (20px) when
   rendered as a rounded square; full diamond / arrow shapes are SVG-
   drawn paths matching the symbol geometry.
 - **The symbol** — the Frontkom logo symbol uses a stylised geometric
@@ -1118,15 +1146,19 @@ color transitions at 150–200ms. No transforms.
 These components are for advertising contexts only — banners, social
 media, posters, event materials. Don't use them on the website.
 
-- **`logo-frame`** — the white shape that holds the wordmark in
-  **formal display banner ads only** (banner formats like 580×500,
-  980×300, 180×500 where the logo is the hero element). For social
-  media, posters, slides, app UI, and any other indigo surface, place
-  the inverted white logo directly on the indigo background — do NOT
-  use a frame. The frame shape adapts to the banner aspect ratio:
-  - Square / tall (e.g. 580×500) — full square diamond rotated 45°.
-  - Wide (e.g. 980×300) — right-pointing arrow / pentagon.
-  - Narrow vertical (e.g. 180×500) — `rounded.xxl` rounded square.
+- **`logo-frame-diamond` / `logo-frame-arrow` / `logo-frame-rounded`** —
+  the white shape that holds the wordmark in **formal display banner ads
+  only** (banner formats like 580×500, 980×300, 180×500 where the logo is
+  the hero element). For social media, posters, slides, app UI, and any
+  other indigo surface, place the inverted white logo directly on the
+  indigo background — do NOT use a frame. One token per shape; pick by
+  banner aspect ratio:
+  - `logo-frame-diamond` — square / tall (e.g. 580×500). Square rotated
+    45°, drawn as an SVG path.
+  - `logo-frame-arrow` — wide (e.g. 980×300). Right-pointing arrow /
+    pentagon, drawn as an SVG path.
+  - `logo-frame-rounded` — narrow vertical (e.g. 180×500). Rounded
+    square at `rounded.xl` (20px) — the only variant with a CSS radius.
   - In all cases: pure white fill, charcoal logo inside, padding
     proportional to the banner size.
 - **`poster-title`** — large bold title on indigo for **event posters
@@ -1177,7 +1209,7 @@ white canvas and have to rebuild the brand by hand.
 
 | Layout name | Maps to component | Canvas | Fixed elements |
 |---|---|---|---|
-| `Frontkom forside` | `slide-cover` | `background-dark` | Gradient bar, top edge; white logo centered in lower third |
+| `Frontkom forside` | `slide-cover` | `background-dark` | Gradient bar, top edge; white logo in lower third, aligned with the title |
 | `Frontkom mørk side` | `slide-content` | `background-dark` | White logo bottom-right |
 | `Frontkom lys side` | `slide-statement` | `background-muted` | Charcoal logo bottom-right |
 
@@ -1231,8 +1263,11 @@ or left-aligned composition with:
 - An eyebrow in `brand` orange (e.g. "A part of the Frontkom Value
   Layer")
 - The slide title in `h1`, white (`on-dark`)
-- The Frontkom logo in white centered in the lower third (this is
-  the only slide where the logo is centered)
+- The Frontkom logo in white in the lower third, **aligned with the
+  title** — left-aligned when the title is left-aligned, centered only
+  when the whole composition is centered. Don't center the logo under a
+  left-aligned title; the logo floating mid-slide while the text sits
+  left looks off.
 
 Use `slide-cover` and add the gradient bars manually with CSS or SVG.
 
@@ -1312,10 +1347,15 @@ Use `slide-content` with CTA composition.
 
 #### Info-card grid (slide 2–3 of master deck)
 
-A grid of pastel-filled cards. Each card holds 2–4 lines of body text in
-full-strength `foreground` charcoal — never `foreground-muted` grey,
-which looks washed and muddy on the pastel fills — with key phrases set
-in **bold** in the card's *emphasis color*.
+A grid of pastel-filled cards. Two firm colour rules, both easy to get
+wrong by falling back on the generic "dark heading + grey body" pattern:
+
+- **Card heading and any key-word emphasis take the card's `emphasisColor`
+  — its parent gradient hue — never charcoal.** That colour is what ties
+  each card to its fill.
+- **Body text is full-strength `foreground` charcoal — never
+  `foreground-muted` grey**, which looks washed and muddy on the pastel
+  fills.
 
 **Top-align the content in every card — never vertically center it.**
 Each card sets `verticalAlign: top`: the heading starts at the top padding
@@ -1464,7 +1504,7 @@ is reserved for the marketing hero H1).
   for large display headings, the gradient, and accents — not body text or
   UI. White text on an orange button is permitted on slides only, where
   WCAG AA doesn't apply (see Slide-specific).
-- **Don't** use the `logo-frame`, `poster-title`, or `gradient-bar`
+- **Don't** use the `logo-frame-*`, `poster-title`, or `gradient-bar`
   components on web. They're for advertising contexts.
 
 ### Advertising-specific
@@ -1472,9 +1512,9 @@ is reserved for the marketing hero H1).
 - **Do** default to indigo canvas.
 - **Do** use `gradient-flow-emphasis` to split a message into "the
   setup" (solid foreground) and "the punch" (gradient).
-- **Do** use the white `logo-frame` to anchor the wordmark on indigo
-  backgrounds — adapt the shape (diamond, arrow, rounded square) to the
-  ad aspect ratio.
+- **Do** use a white `logo-frame-*` to anchor the wordmark on indigo
+  banner ads — pick the token whose shape matches the aspect ratio:
+  `logo-frame-diamond`, `logo-frame-arrow`, or `logo-frame-rounded`.
 - **Do** use ALL CAPS for short event titles in `poster` typography.
   This is the only place ALL CAPS is permitted for headings.
 - **Don't** reuse web layout patterns (alternating sections, max-w-3xl)
@@ -1503,14 +1543,21 @@ is reserved for the marketing hero H1).
   *means* "process / time / change" (brand book p. 8).
 - **Do** include an orange eyebrow at the top-left of content slides
   to identify the deck section ("Master sales slides", "Om Frontkom").
+- **Don't** set pastel card headings in charcoal. The heading takes the
+  card's `emphasisColor` (its parent gradient hue) — that colour is the
+  whole point of the card.
+- **Don't** style pastel card body with the web editorial grey
+  (`foreground-muted`). Inside a pastel card, body text is full
+  `foreground` charcoal — the grey reads as washed and muddy on the fill.
 - **Don't** vertically center the content inside info cards or columns.
   Top-align it (`verticalAlign: top`) so headings line up across the row;
   centering makes the tops sit at different heights and looks ragged.
 - **Don't** use `hero-gradient` text fill on slide headings — gradient
   text fill is web-only. Use `signature-highlight` instead.
 - **Don't** put the logo anywhere except bottom-right on content
-  slides. Cover slides are the only exception (logo centered in the
-  lower third).
+  slides. Cover slides are the only exception — the logo sits in the
+  lower third there, aligned with the title (not centered under a
+  left-aligned title).
 - **Don't** use `decorative-stripe` (web) or `gradient-bar` (poster)
   inside content slides. The cover slide is the only place gradient
   bars appear in a deck — framing the canvas top and bottom.
