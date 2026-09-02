@@ -17,6 +17,9 @@ colors:
   background-dark: "#1A0054"   # Deep Indigo. Pantone 2745 C. The brand / ad default.
   background-dark-deep: "#12003B" # A shade deeper than background-dark, for the
                                 # button-brand hover state. 19.29:1 on white text.
+                                # OPEN: the 2021 book says #160046 for a deep indigo,
+                                # and the new colour page shows that value. Not
+                                # resolved — kept at #12003B until the team decides.
   background-muted: "#F7F7F8"  # Soft Cloud — alternative section bg on web.
   slide-statement-canvas: "#F7F7F8" # Alias of background-muted. Same value,
                                 # named so the role is visible at the call site:
@@ -33,7 +36,8 @@ colors:
   foreground-muted: "#5E5C66"  # Web / long-form body paragraphs (~80% foreground
                                 # on white). NOT for pastel info cards or slide
                                 # cards — those use full `foreground` charcoal.
-  foreground-subtle: "#9A98A0" # Quotes & metadata only (~50% foreground on white).
+  foreground-subtle: "#9A98A0" # Metadata & timestamps only (~50% on white). NOT for
+                                # quotes anymore — quotes are indigo (see quote token).
   # ===== LINKS =====
   link: "#4F1BE5"              # Vivid Violet. Pantone 2090 C. Brand book p. 7.
   link-on-dark: "#C8B5FF"      # Soft Lavender. Same value as on-dark-muted but
@@ -73,11 +77,14 @@ colors:
   # The signature gradient. Used as text fill, text-flow, decorative bars,
   # frame accents. Derived from brand book's 7-stop "color harmony" (p. 8),
   # condensed to 5 stops for cleaner rendering on text and small surfaces.
-  gradient-1: "#F86233"        # = brand. Gradient start.
-  gradient-2: "#DA446E"
-  gradient-3: "#BC25A9"        # Middle stop. Brand book color harmony p. 8.
-  gradient-4: "#861FCB"
-  gradient-5: "#521CE4"        # Gradient terminus, near link color.
+  # Pantone + CMYK confirmed against the 2021 book (Oct 2026 review).
+  # Flag: the library "Gradient" style has only THREE stops. Five (print) vs
+  # three (screen) may both be correct, but it isn't documented anywhere.
+  gradient-1: "#F86233"        # = brand. Pantone 1585 C. C0 M66 Y99 K0. Start.
+  gradient-2: "#DA446E"        # Pantone 198 C.  C0 M85 Y41 K0.
+  gradient-3: "#BC25A9"        # Pantone 2395 C. C23 M96 Y0 K0. Middle stop (p. 8).
+  gradient-4: "#861FCB"        # Pantone 2592 C. C52 M93 Y0 K0. (#861FC8 in 2021 = typo.)
+  gradient-5: "#521CE4"        # Pantone 2090 C. C78 M89 Y0 K0. Terminus, near link.
 typography:
   # Hero uses Red Hat Display 400 — how frontkom.com renders the marketing H1,
   # and the canvas the gradient text-fill sits on. Display has more character
@@ -175,11 +182,11 @@ spacing:
 # brand-book pages).
 rounded:
   sm: 8px      # input fields
-  md: 12px     # small elements (colour swatches, tags, chips, thumbnails), and
+  md: 12px     # small elements: colour swatches, tags, chips, thumbnails. Also
                # any element nested inside a card — one step down from the card's
                # 20px so the two surfaces read as separate, not merged into one.
-  xl: 20px     # cards and panels
-  full: 9999px # buttons, and pill / dot shapes (badges, process steps, stripe)
+  lg: 20px     # cards, panels, image frames
+  full: 9999px # buttons, pills, badges. Nothing else
 components:
   # ===========================================================
   # GRADIENT TREATMENTS (the signature device, three forms)
@@ -269,17 +276,17 @@ components:
   card-light:
     backgroundColor: "{colors.background-muted}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px
   card-light-bordered:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px
   card-dark:
     backgroundColor: "{colors.background-dark}"
     textColor: "{colors.on-dark}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 40px
 
   # ===========================================================
@@ -295,15 +302,25 @@ components:
   caption:
     textColor: "{colors.foreground-subtle}"
     typography: "{typography.body-sm}"
-  # Quote block — large grey body text with the opening sentence in
-  # foreground. Brand book p. 13 ("the quote should be written in grey
-  # color with a text highlighted black").
+  # Quote block — indigo body (NOT the old light grey, which measured
+  # 2.85:1 and failed AA — and a quote should be foregrounded, not receded).
+  # Opening sentence in brand orange bold. Orange measures 3.09:1 and clears
+  # AA only as Large Text, so the opening NEVER goes below 25px (h3 size).
+  # Oct 2026 review, replaces brand book p. 13 grey treatment.
   quote:
-    textColor: "{colors.foreground-subtle}"
-    typography: "{typography.h4}"
+    textColor: "{colors.background-dark}"   # #1A0054 indigo
+    typography: "{typography.h3}"           # 34/46
   quote-emphasis:
+    textColor: "{colors.brand}"             # #F86233 orange opening sentence
+    typography: "{typography.h3}"
+    fontWeight: 700
+  quote-name:
     textColor: "{colors.foreground}"
-    typography: "{typography.h4}"
+    typography: "{typography.h4}"           # 25/33
+    fontWeight: 700
+  quote-role:
+    textColor: "{colors.foreground}"
+    typography: "{typography.lead}"         # 22/33
   # Tagline on indigo — soft lavender, often paired with white primary text.
   # See "Bevar historien. Skap fremtiden." in Bakgårdsfest poster.
   tagline-on-dark:
@@ -389,7 +406,7 @@ components:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
     shape: rounded-square
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px 48px
   # Poster title — large bold text, often ALL CAPS, with gradient text fill
   # on indigo backgrounds. The "BAKGÅRDSFEST" treatment.
@@ -468,28 +485,28 @@ components:
     backgroundColor: "{colors.pastel-rose}"
     textColor: "{colors.foreground}"
     emphasisColor: "{colors.gradient-2}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px
     verticalAlign: top
   slide-card-magenta:
     backgroundColor: "{colors.pastel-magenta}"
     textColor: "{colors.foreground}"
     emphasisColor: "{colors.gradient-3}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px
     verticalAlign: top
   slide-card-purple:
     backgroundColor: "{colors.pastel-purple}"
     textColor: "{colors.foreground}"
     emphasisColor: "{colors.gradient-4}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px
     verticalAlign: top
   slide-card-blue:
     backgroundColor: "{colors.pastel-blue}"
     textColor: "{colors.foreground}"
     emphasisColor: "{colors.gradient-5}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 32px
     verticalAlign: top
 
@@ -500,12 +517,12 @@ components:
   slide-bubble-dark:
     backgroundColor: "{colors.background-dark}"
     textColor: "{colors.on-dark}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 24px 32px
   slide-bubble-light:
     backgroundColor: "{colors.background}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.xl}"
+    rounded: "{rounded.lg}"
     padding: 24px 32px
 
   # ===========================================================
@@ -544,6 +561,8 @@ components:
   signature-highlight:
     textColor: "{colors.brand}"
     typography: "{typography.h2}"
+    fontFamily: Red Hat Display   # Display 400 — the one editorial use of Display
+    fontWeight: 400
 ---
 
 # Frontkom Design System
@@ -620,6 +639,24 @@ Decision shortcut for AI agents:
 If the agent does not have access to either SVG, the correct response is
 to ask the user to provide it or to use a text placeholder
 ("[Frontkom logo]") — not to attempt a freehand SVG.
+
+### Clear space & spacing
+
+Clear space is measured on the lowercase **r**, NOT on the symbol height
+(the old "clear space = symbol height" rule is wrong). Measured on the
+2021 lockup (the orange plate is 560×165 with the 476×81 logo area
+inside — exactly 42px of air on all four sides; the `r` is 29×42):
+
+- **Clear space** around the lockup = the **height of the `r`** (the
+  x-height of the logotype) = **8.82% of the lockup width**. Keep at
+  least this much empty space on all four sides.
+- **Space between symbol and logotype** = the **width of the `r`** =
+  **6.1% of the lockup width**. ("Space between symbol and logotype
+  equals the width of r" is verbatim from the 2021 file, on a page that
+  never made the PDF export.)
+
+The symbol's own height is ~82 at the same scale — nearly double the
+clear space — so never use the symbol height as the clear-space measure.
 
 ## Font loading — set this up before generating any visual
 
@@ -745,7 +782,9 @@ The system supports **two equal default canvases**, chosen by context:
   Frontkom about its work. White provides the airy, editorial calm where
   long-form content can breathe.
 
-Don't think of one as default and the other as exception — they're peers.
+Don't think of one as default and the other as exception — they're peers,
+chosen by context. Presentations lean on the dark canvas; the website
+stays light, with the occasional dark section as a break in the rhythm.
 The wrong canvas for the context is more wrong than the wrong color
 within the right canvas.
 
@@ -796,7 +835,8 @@ values are provided for WCAG validation:
 - **`foreground-muted` `#5E5C66`** (≈80%) — web / long-form body
   paragraphs. AA passes 6.4:1. Not for pastel info cards or slide cards —
   those keep body text in full `foreground` charcoal.
-- **`foreground-subtle` `#9A98A0`** (≈50%) — quotes and metadata only.
+- **`foreground-subtle` `#9A98A0`** (≈50%) — metadata and timestamps only
+  (quotes are now indigo, not grey).
   Below AA for paragraph text, by design.
 
 On indigo, `on-dark` (`#FFFFFF`) is the primary text color and
@@ -852,9 +892,12 @@ Website refinement: the **small heading levels (`h4`, `h5`) use regular
 plus placement already carry the hierarchy. Bold (700) stays on the
 larger headings `h1`–`h3`.
 
-The website extends this with one exception: **Red Hat Display 400** is
-used on the marketing hero H1 only, providing the canvas for the
-gradient text fill. This is a documented website-led deviation.
+The website extends this with a documented exception: **Red Hat Display
+400** is used on the marketing hero H1 (the canvas for the gradient text
+fill) **and on the signature highlighted phrase** (`signature-highlight`).
+The 2021 file uses Display in both places; the original typography page
+never listed them, which was a gap, not a doubt. Everywhere else is Red
+Hat Text (400 / 700).
 
 Posters and advertising add a third extension: the **`poster`** size
 (56px / `letterSpacing: 0.02em`), used for short event titles like
@@ -966,11 +1009,20 @@ The system is **flat**. No drop shadows. Depth comes from:
    `background` / `background-muted` / `background-dark` on web.
 2. **Border accents** — `border` outlines on light cards;
    `border-on-dark` for subtle indigo hierarchy.
-3. **Corner radius** — `rounded.xl` (cards, panels, and the logo frame)
+3. **Corner radius** — `rounded.lg` (cards, panels, and the logo frame)
    creates softness without shadow.
 4. **Outlined symbol elements** (brand book p. 17) — outlined versions
    of the Frontkom symbol can be placed partially off-canvas as
    atmospheric depth devices.
+5. **Filled symbol as a tint** — the mark scaled far beyond the frame
+   and cropped by the edge, in a tone so close to the surface it reads
+   as texture, not as a logo. On light grey: white symbol (1.05:1 vs
+   `#F7F7F8`). On indigo: `#22006C` (1.10:1 vs `#1A0054`).
+
+Indigo tints are made by **lightening along the hue, not by mixing in a
+neutral.** `#1A0054` has green at zero; `#2D1170` adds green and turns
+muddy, while `#22006C` keeps green at zero and reads cleaner even though
+it measures weaker.
 
 If `box-shadow` feels needed, increase contrast or radius instead.
 
@@ -978,7 +1030,7 @@ If `box-shadow` feels needed, increase contrast or radius instead.
 
 - **Actions** — always `rounded.full` (pill). Buttons, tags, language
   toggle. No square corners on interactive elements.
-- **Cards** — `rounded.xl` (20px), the same on web and slides. Kept
+- **Cards** — `rounded.lg` (20px), the same on web and slides. Kept
   deliberately restrained — soft, never so round it looks naive.
 - **Inputs** — `rounded.sm` (8px). The only place where shape softens
   but doesn't go fully round.
@@ -987,7 +1039,7 @@ If `box-shadow` feels needed, increase contrast or radius instead.
   steps down as surfaces nest: an element inside a card takes 12px, never
   the card's own 20px, so the two surfaces read as separate rather than
   merging into one.
-- **Logo frame (advertising only)** — `rounded.xl` (20px) when
+- **Logo frame (advertising only)** — `rounded.lg` (20px) when
   rendered as a rounded square; full diamond / arrow shapes are SVG-
   drawn paths matching the symbol geometry.
 - **The symbol** — the Frontkom logo symbol uses a stylised geometric
@@ -1004,8 +1056,10 @@ The signature device. Three forms — pick by context.
 #### 1. `hero-gradient` — gradient text fill
 
 The whole heading takes the gradient as its color. Used on H1 / hero
-headings on **white canvases**. Solid `brand` orange is the fallback
-for engines without `background-clip: text` support.
+headings on **both white and indigo canvases** — the 2021 cover and the
+EU-law ad both run full gradient text on indigo. Size floor: **never
+below `h3`.** Solid `brand` orange is the fallback for engines without
+`background-clip: text` support.
 
 ```css
 background: linear-gradient(90deg, #F86233, #DA446E, #BC25A9, #861FCB, #521CE4);
@@ -1033,21 +1087,24 @@ and never enlarge one clause relative to the other. ALL CAPS belongs to
 `poster` event titles only (see Casing and `poster-title`), never to
 gradient-flow headlines.
 
-Geometry: apply the gradient as a single fill across the *entire*
-emphasis clause (one element), so the ramp reads continuously across the
-line breaks — don't fill each line separately. It progresses with
-reading order: top-down across multiple lines, left-to-right on a single
-line. Because it is one fill over the wrapped block, each line shows a
-slice of the ramp (top line orange-ish, bottom line violet) — that is
-intended.
+Geometry (corrected, Oct 2026 review — the old "top-down on multi-line"
+rule was wrong): the ramp runs **horizontally and restarts on every
+line**. Each line opens in orange; how far along the ramp it gets depends
+on the line length, so short lines stop at magenta — that is correct, not
+a bug.
+
+Technique: put the gradient on the **whole heading** and paint the setup
+phrase back in **solid** color on top. Never fill the emphasis phrase as
+its own element — that restarts the ramp on each line *of the phrase*.
+Break the line so the emphasis phrase **starts at the left margin**; that
+is what makes it open in orange.
 
 ```css
-/* gradient clause only; the solid clause keeps its foreground color */
-background: linear-gradient(180deg, #F86233, #DA446E, #BC25A9, #861FCB, #521CE4);
-background-clip: text;
--webkit-background-clip: text;
-color: transparent;
-/* single-line use → switch to linear-gradient(90deg, …) */
+.flow        { display: inline-block;
+               background: linear-gradient(90deg, #F86233, #DA446E, #BC25A9, #861FCB, #521CE4);
+               background-clip: text; -webkit-background-clip: text;
+               color: transparent; }
+.flow .solid { color: #FFFFFF; }   /* setup phrase painted back solid (charcoal on white) */
 ```
 
 This is the strongest brand moment in advertising and works equally
@@ -1094,10 +1151,10 @@ color transitions at 150–200ms. No transforms.
 ### Cards
 
 - **`card-light`** — `background-muted` fill on white sections.
-  Workhorse. `rounded.xl`, 32px padding.
+  Workhorse. `rounded.lg`, 32px padding.
 - **`card-light-bordered`** — white fill with 1px `border`, for cards
   on `background-muted` sections where contrast is needed.
-- **`card-dark`** — `background-dark` fill, white text, `rounded.xl`,
+- **`card-dark`** — `background-dark` fill, white text, `rounded.lg`,
   40px padding.
 
 ### Editorial
@@ -1107,10 +1164,16 @@ color transitions at 150–200ms. No transforms.
 - **`body-paragraph-on-dark`** — `body` in `on-dark` (white) on indigo.
 - **`caption`** — `body-sm` in `foreground-subtle`. Image subtitles,
   metadata, fine print. Never body copy.
-- **`quote`** + **`quote-emphasis`** — large quote blocks (h4-sized).
-  Brand book p. 13: quote body in `foreground-subtle` (grey), opening
-  sentence in `foreground` (near-black) for emphasis. The canonical
-  Frontkom quote treatment.
+- **`quote`** + **`quote-emphasis`** (+ `quote-name`, `quote-role`) —
+  large quote blocks. Quote body in `background-dark` indigo at `h3`
+  (34/46); the opening sentence in `brand` orange bold. This replaces the
+  old light-grey treatment, which measured 2.85:1 and failed AA — and a
+  quote should be foregrounded, not receded. The orange opening measures
+  3.09:1, so it clears AA only as Large Text: it never drops below 25px.
+  Attribution: `quote-name` charcoal 25/33 bold, `quote-role` charcoal
+  22/33. (Open conflict: the "one orange phrase per page" signature rule —
+  an orange quote opening is one such highlight. Either the opening is
+  exempt, or a quote counts as the page's one highlight. Not yet resolved.)
 - **`tagline-on-dark`** — body text in `on-dark-muted` (soft lavender)
   on indigo. Used for closing taglines like "Bevar historien. Skap
   fremtiden." The lavender tagline is one of the most identifiable
@@ -1158,7 +1221,7 @@ media, posters, event materials. Don't use them on the website.
   - `logo-frame-arrow` — wide (e.g. 980×300). Right-pointing arrow /
     pentagon, drawn as an SVG path.
   - `logo-frame-rounded` — narrow vertical (e.g. 180×500). Rounded
-    square at `rounded.xl` (20px) — the only variant with a CSS radius.
+    square at `rounded.lg` (20px) — the only variant with a CSS radius.
   - In all cases: pure white fill, charcoal logo inside, padding
     proportional to the banner size.
 - **`poster-title`** — large bold title on indigo for **event posters
@@ -1379,7 +1442,7 @@ pairs with its parent hue as the emphasis color:
 - `slide-card-blue` — `pastel-blue` (`#D9CDF9`) bg; emphasis in
   `gradient-5` blue-violet (`#521CE4`). Darkest.
 
-Mix in 1–2 photo cards (rounded `rounded.xl`) at the same dimensions
+Mix in 1–2 photo cards (rounded `rounded.lg`) at the same dimensions
 to break the monotony.
 
 Note on contrast (emphasis = parent hue, measured on each fill):
@@ -1456,6 +1519,95 @@ is reserved for the marketing hero H1).
 - They don't use `card-light` or `card-dark` web cards — use the slide
   card variants (`slide-card-rose` / `magenta` / `purple` / `blue`) instead.
 
+## Photography
+
+Read from the actual photo library, not aspirational. The manner:
+
+- **Available light.** Daylight from a window, or sun outdoors. No flash,
+  no studio rig. Shadows fall where they fall.
+- **Caught, not posed.** People look at each other, at a screen, at the
+  work. Eye contact with the camera is the exception.
+- **The real workplace.** Our own rooms, whiteboards, sticky notes,
+  printouts, the brick wall in Gamlebyen. No stock interiors.
+- **Colour comes from the room.** A photo's palette belongs to the room
+  and its materials. Never tone or filter images toward the brand colours.
+- **Depth is a tool.** A shoulder or a plant out of focus in the
+  foreground places the viewer in the room.
+- **People appear together.** One person alone at a desk reads as a
+  portrait; two or more read as the way we work.
+
+### Text over photo
+
+Three treatments:
+
+1. **None** — only where the image is quiet behind the text. Check at the
+   smallest size the layout ever renders.
+2. **Darken the whole image** — indigo at ~55%. When text sits in the
+   middle of the frame, or when the crop may change.
+3. **A scrim behind the text** — indigo fading to nothing. When the image
+   carries the message and only part of it should go quiet.
+
+Aim for the ratio, not the look: measure white against the lightest pixel
+the text actually crosses, not the average. 4.5:1, or 3:1 for large text.
+**The overlay is always indigo, never black** — black flattens the image
+and pulls the composition out of the palette.
+
+## Iconography
+
+```
+Source:  Aksel, designsystemet.no (open source)
+Variant: Stroke
+Grid:    24px
+Use:     instances of the published components, so they update at source
+```
+
+Icons inherit the text colour beside them. An icon is never the only
+carrier of meaning: it sits with a label, or it has an accessible name.
+
+**The symbol is not an icon.** The Frontkom mark, the bracket bullet, and
+the outlined shapes are brand elements. They never enter the icon set,
+and an icon never stands in for the logo.
+
+**The bullet is a bracket.** The bullet-point marker is the component
+`shape/fill/bracket`, 8×16px, taken from the right-hand part of the
+symbol. It is NOT a square rotated 45°.
+
+## Avatars
+
+Sharp corners, no rounding, no indigo variant. Four combinations only:
+
+```
+white background     / charcoal symbol
+white background     / orange symbol
+charcoal background  / white symbol
+orange background    / white symbol
+```
+
+Padding is 14.3% of the tile (38 of 265 in the original). The symbol's
+proportion is 189×177.
+
+## Prose & punctuation
+
+Running prose in materials follows the text/voice rules (a separate tone
+skill owns full voice). One rule belongs here because people write
+straight from this file:
+
+**No dash as a pause marker** — neither em dash nor en dash. Use a full
+stop, comma, colon, or parentheses instead. Number ranges like 64–72px
+are not pause markers and keep the dash.
+
+## Archived
+
+Retired, kept here so no one re-introduces them:
+
+- **The anniversary logos.** (See open question below — Figma has a
+  25-year version.)
+- **The Frontkom Experience lockup.** Discontinued, no successor.
+- **The outline display lettering** from the 2021 cover. Heading type
+  takes the solid gradient fill instead. Note there is still a
+  documented text style for it in the library, `Desktop/Background text
+  outlined`; it should be retired there too.
+
 ## Do's and Don'ts
 
 ### General
@@ -1474,8 +1626,9 @@ is reserved for the marketing hero H1).
 - **Don't** add drop shadows. Depth is contrast, radius, and outlined
   off-canvas symbol elements.
 - **Don't** use square corners on buttons or interactive elements.
-- **Don't** mix Red Hat Display into anything other than `hero`. Display
-  is reserved for the marketing H1.
+- **Don't** mix Red Hat Display into anything other than `hero` and
+  `signature-highlight`. Those are its only two uses; everything else is
+  Red Hat Text.
 - **Don't** apply the gradient to body copy or small text — at sizes
   below `h3`, the gradient turns muddy and contrast drops below WCAG
   AA. Reserve it for hero, h1, h2, poster, and decorative bars.
@@ -1536,8 +1689,8 @@ is reserved for the marketing hero H1).
 - **Do** use the muted grey canvas (`background-muted`) only for
   statement slides, paired with the giant outlined Frontkom symbol
   (`logo-frontkom-symbol-outlined.svg`) bottom-right.
-- **Do** use the canonical quote treatment in slides too (grey body,
-  foreground emphasis on the opening sentence).
+- **Do** use the canonical quote treatment in slides too: indigo body,
+  brand-orange bold opening sentence (min 25px).
 - **Do** use the gradient harmony as the fill of stages or steps when
   showing progression — pyramid, journey, timeline. The gradient
   *means* "process / time / change" (brand book p. 8).
@@ -1552,17 +1705,20 @@ is reserved for the marketing hero H1).
 - **Don't** vertically center the content inside info cards or columns.
   Top-align it (`verticalAlign: top`) so headings line up across the row;
   centering makes the tops sit at different heights and looks ragged.
-- **Don't** use `hero-gradient` text fill on slide headings — gradient
-  text fill is web-only. Use `signature-highlight` instead.
+- **Don't** use `hero-gradient` text fill on ordinary content-slide
+  headings — prefer `signature-highlight` there. (Full gradient text fill
+  is allowed on hero-scale headings and covers, on white or indigo, at
+  `h3`+; it just isn't the treatment for a regular slide heading.)
 - **Don't** put the logo anywhere except bottom-right on content
   slides. Cover slides are the only exception — the logo sits in the
   lower third there, aligned with the title (not centered under a
   left-aligned title).
 - **Don't** use `decorative-stripe` (web) or `gradient-bar` (poster)
-  inside content slides. The cover slide is the only place gradient
-  bars appear in a deck — framing the canvas top and bottom.
-- **Don't** use Red Hat Display on slides. Display is reserved for
-  the marketing hero H1 on web.
+  inside content slides. The cover slide is the only place a gradient
+  bar appears in a deck — on the **top edge only**, never the bottom.
+- **Don't** use Red Hat Display on slides except for the
+  `signature-highlight` phrase (Display 400). Everything else on slides
+  is Red Hat Text.
 - **Don't** use the pastel slide cards (`pastel-rose`, `pastel-magenta`,
   `pastel-purple`, `pastel-blue`) on web. They're for slide info-card
   grids only.
