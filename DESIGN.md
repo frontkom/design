@@ -86,50 +86,50 @@ colors:
   gradient-4: "#861FCB"        # Pantone 2592 C. C52 M93 Y0 K0. (#861FC8 in 2021 = typo.)
   gradient-5: "#521CE4"        # Pantone 2090 C. C78 M89 Y0 K0. Terminus, near link.
 typography:
-  # Hero uses Red Hat Display 400 — how frontkom.com renders the marketing H1,
+  # Hero uses Red Hat Display 500 (Medium) — how frontkom.com renders the H1,
   # and the canvas the gradient text-fill sits on. Display has more character
   # at very large sizes than Red Hat Text. (Brand book specifies only Red Hat
   # Text; this is a documented website-led extension.)
   hero:
     fontFamily: Red Hat Display
     fontSize: 80px
-    fontWeight: 400
+    fontWeight: 500
     lineHeight: 1.1
     letterSpacing: -0.01em
-  # All other headers use Red Hat Text Bold (700) per brand book p. 9. Sizes
-  # follow the brand book's 1.333 (4:3) ratio scale.
+  # All other headers use Red Hat Text Medium (500) per brandbook 3.0's
+  # typography page. Sizes follow the 1.333 (4:3) ratio scale.
   h1:
     fontFamily: Red Hat Text
     fontSize: 60px
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.15
     letterSpacing: -0.01em
   h2:
     fontFamily: Red Hat Text
     fontSize: 45px
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.2
   h3:
     fontFamily: Red Hat Text
     fontSize: 34px
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.25
   h4:
     fontFamily: Red Hat Text
     fontSize: 25px
-    fontWeight: 400        # small heading → regular; bold reads heavy at this size
+    fontWeight: 500        # Red Hat Text Medium — all headers Medium (brandbook 3.0)
     lineHeight: 1.3
   h5:
     fontFamily: Red Hat Text
     fontSize: 19px
-    fontWeight: 400        # small heading → regular; distinguish from body by role, not weight
+    fontWeight: 500        # Red Hat Text Medium (brandbook 3.0)
     lineHeight: 1.4
   # Poster heading — used in advertising and event materials. Larger letter
   # spacing, often set in ALL CAPS. See annonse-eksempelene.
   poster:
     fontFamily: Red Hat Text
     fontSize: 56px
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1
     letterSpacing: 0.02em
   lead:
@@ -150,12 +150,12 @@ typography:
   label:
     fontFamily: Red Hat Text
     fontSize: 14px
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1.4
   eyebrow:
     fontFamily: Red Hat Text
     fontSize: 12px
-    fontWeight: 700
+    fontWeight: 500
     lineHeight: 1
     letterSpacing: 0.1em
 spacing:
@@ -313,11 +313,11 @@ components:
   quote-emphasis:
     textColor: "{colors.brand}"             # #F86233 orange opening sentence
     typography: "{typography.h3}"
-    fontWeight: 700
+    fontWeight: 500   # emphasis carried by colour (orange vs indigo), not weight
   quote-name:
     textColor: "{colors.foreground}"
     typography: "{typography.h4}"           # 25/33
-    fontWeight: 700
+    fontWeight: 500
   quote-role:
     textColor: "{colors.foreground}"
     typography: "{typography.lead}"         # 22/33
@@ -681,18 +681,19 @@ environment that has network access:
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,400;1,400&family=Red+Hat+Text:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,400;0,500;1,400;1,500&family=Red+Hat+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
 ```
 
 Or via CSS `@import`:
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,400;1,400&family=Red+Hat+Text:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,400;0,500;1,400;1,500&family=Red+Hat+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap');
 ```
 
 The URL above includes only the weights and styles the system uses:
 Display 400 regular & italic; Text 400 regular & italic, 700 regular &
-italic. Don't load other weights — the system uses 400 and 700 only.
+italic. The system uses just two weights: 400 (Regular) for paragraphs
+and 500 (Medium) for everything else — don't load weights beyond these.
 
 **For local development or when the CDN isn't reachable**, use the
 provided TTF files via `@font-face`:
@@ -760,10 +761,10 @@ deliberate, not broken.
   claim it's "close enough." It isn't — Red Hat's character markers
   (the open `a`, the angled `t` terminal, the geometric `o`) are part
   of the brand.
-- Don't load all weights. The system uses 400 and 700 only. Loading
+- Don't load every weight. The system uses 400 and 500 only. Loading
   300, 500, 600, 800, 900 wastes bandwidth and tempts mixing.
 - Don't use the variable font's full weight axis to invent new weights
-  (e.g. 500 for "soft headers"). Stick to 400 and 700.
+  the full variable axis is wasteful. Stick to 400 and 500.
 
 ## Overview
 
@@ -883,21 +884,19 @@ treatments for the three canonical applications.
 
 ## Typography
 
-The brand book is unambiguous: **Red Hat Text Bold (700)** for headers,
-**Red Hat Text Regular (400)** for body. Sizes follow a 1.333 (4:3)
-ratio scale.
+Per brandbook 3.0's typography page: **Red Hat Text Medium (500)** for all
+headers, **Red Hat Text Regular (400)** for paragraphs. Sizes follow a
+1.333 (4:3) ratio scale. (This restores the 2021 book's Medium header
+weight — an earlier draft of this file had used Bold 700 with h4/h5 in
+regular; brandbook 3.0 settles on a single Medium weight across the header
+ramp.)
 
-Website refinement: the **small heading levels (`h4`, `h5`) use regular
-(400), not bold**. At those sizes bold reads heavy and cramped, and size
-plus placement already carry the hierarchy. Bold (700) stays on the
-larger headings `h1`–`h3`.
-
-The website extends this with a documented exception: **Red Hat Display
-400** is used on the marketing hero H1 (the canvas for the gradient text
-fill) **and on the signature highlighted phrase** (`signature-highlight`).
-The 2021 file uses Display in both places; the original typography page
-never listed them, which was a gap, not a doubt. Everywhere else is Red
-Hat Text (400 / 700).
+The website adds a documented exception: **Red Hat Display** is used on
+the marketing hero H1 (the canvas for the gradient text fill; Display 500
+to match the header weight) **and on the signature highlighted phrase**
+(`signature-highlight`). The 2021 file uses Display in both places; the
+original typography page never listed them, which was a gap, not a doubt.
+Everywhere else is Red Hat Text (400 / 500).
 
 Posters and advertising add a third extension: the **`poster`** size
 (56px / `letterSpacing: 0.02em`), used for short event titles like
@@ -907,25 +906,23 @@ uppercase but is not a heading).
 
 ### Roles
 
-- **`hero`** — Red Hat Display 400, ~80px. The marketing H1 with
+- **`hero`** — Red Hat Display 500, ~80px. The marketing H1 with
   gradient text fill.
-- **`h1`** — Red Hat Text 700, ~60px. Article H1, secondary marketing
+- **`h1`** — Red Hat Text 500, ~60px. Article H1, secondary marketing
   hero, page titles in editorial mode, and the ad text-flow size.
-- **`h2`** — Red Hat Text 700, ~45px. Major section headings.
-- **`h3`** — Red Hat Text 700, ~34px. Article H2.
-- **`h4`** — Red Hat Text 400, ~25px. Subsection headings, quote blocks.
-  Regular weight (see the small-heading note above).
-- **`h5`** — Red Hat Text 400, ~19px. Card titles. Regular weight; since
-  this sits close to `body`, lean on size and placement — or uppercase /
-  tracking — to keep it reading as a heading.
-- **`poster`** — Red Hat Text 700, ~56px, slightly increased letter-
+- **`h2`** — Red Hat Text 500, ~45px. Major section headings.
+- **`h3`** — Red Hat Text 500, ~34px. Article H2.
+- **`h4`** — Red Hat Text 500, ~25px. Subsection headings, quote blocks.
+- **`h5`** — Red Hat Text 500, ~19px. Card titles. Sits close to `body`,
+  so lean on size and placement to keep it reading as a heading.
+- **`poster`** — Red Hat Text 500, ~56px, slightly increased letter-
   spacing. Event posters and short ad headlines (often ALL CAPS).
 - **`lead`** — Red Hat Text 400, 22px. The "eye-catching intro" (brand
   book p. 9). Use once, at the start of a text block.
 - **`body`** — Red Hat Text 400, 17px / 1.6. Workhorse paragraph text.
 - **`body-sm`** — Red Hat Text 400, 14px. Image subtitles, fine print.
-- **`label`** — Red Hat Text 700, 14px. Buttons, UI labels.
-- **`eyebrow`** — Red Hat Text 700, 12px, uppercase, `tracking: 0.1em`.
+- **`label`** — Red Hat Text 500, 14px. Buttons, UI labels.
+- **`eyebrow`** — Red Hat Text 500, 12px, uppercase, `tracking: 0.1em`.
 
 ### Fluid sizing
 
