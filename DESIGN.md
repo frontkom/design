@@ -875,6 +875,59 @@ see Components). Aspect ratios common in the system: 320×250, 580×500,
 the ad's proportions: square diamond for tall formats, right-pointing
 arrow for wide formats, rounded square for narrow vertical formats.
 
+### Documents and PDFs (A4)
+
+Applies to proposals, estimates, reports and any other document
+generated as PDF.
+
+- **Page:** A4 portrait. Margins 20 mm left, right and top, 22 mm
+  bottom (room for the page number).
+- **Cover:** no page margin, so the `gradient-bar` reaches the top
+  edge. Content on the cover keeps the same 20 mm left edge as the rest
+  of the document.
+- **Set margins on the page with `@page`, never as padding on a
+  wrapper.** Padding only applies where the element starts, not on
+  every new page, so every page after the cover loses its margin.
+
+```css
+@page        { size: A4; margin: 20mm 20mm 22mm 20mm; }
+@page :first { margin: 0; }
+.cover       { height: 297mm; box-sizing: border-box; padding: 20mm;
+               position: relative; break-after: page; }
+.cover .bar  { position: absolute; top: 0; left: 0; right: 0; height: 1.5mm;
+               background: linear-gradient(90deg, #F86233, #DA446E, #BC25A9, #861FCB, #521CE4); }
+```
+
+- **Renderer:** headless Chromium through Playwright, with
+  `prefer_css_page_size=True` and `print_background=True`. Do not use
+  wkhtmltopdf, even when it is the tool installed by default: it ignores
+  `@page :first` and most break rules, and forces one margin on every
+  page.
+
+```python
+from playwright.sync_api import sync_playwright
+with sync_playwright() as p:
+    browser = p.chromium.launch()
+    page = browser.new_page()
+    page.goto("file:///path/to/document.html")
+    page.pdf(path="document.pdf", prefer_css_page_size=True, print_background=True)
+    browser.close()
+```
+
+- **Page breaks:** a heading is never the last line on a page, and
+  tables, short lists, cards and price boxes are not split.
+
+```css
+h2, h3                           { break-after: avoid; }
+table, ul, figure, .card, .price { break-inside: avoid; }
+thead                       { display: table-header-group; }
+p, li                       { orphans: 3; widows: 3; }
+```
+
+- **Verify before delivering.** Render every page to an image and look
+  at all of them, not only the cover. Check that no text sits closer to
+  the edge than the margin, and that no heading ends a page.
+
 ## Elevation & Depth
 
 The system is **flat**. No drop shadows. Depth comes from:
@@ -1050,6 +1103,9 @@ piece. The bar spans the full width of the cover, 8px on a 1920px wide
 frame and the same proportion on other formats (about 0.4% of the
 width, never thinner than 4px). It works on indigo and on white covers
 alike.
+
+In PDFs the bar reaches the edge only if the cover has no page margin;
+see Layout / Documents and PDFs (A4).
 
 Never place it at the bottom of a page or slide, and never on both
 edges. It is a top accent. Brand book 3.0 uses a single 8px stripe
