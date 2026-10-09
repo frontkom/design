@@ -444,7 +444,7 @@ the logo is the primary subject (see the `logo-frame-*` components); for
 social media, posters, slides, app screens, and most other dark-canvas
 uses, place the inverted logo directly on the indigo background.
 
-Three SVG files are the single source of truth. Link to, embed, or copy
+Four SVG files are the single source of truth. Link to, embed, or copy
 these exact files. Never recreate the logo or make variants of it:
 
 - `assets/logo-frontkom.svg`: charcoal logo (full lockup) for **light backgrounds**.
@@ -452,10 +452,13 @@ these exact files. Never recreate the logo or make variants of it:
 - `assets/logo-frontkom-on-dark.svg`: white logo (full lockup) for **indigo / dark
   backgrounds**.
   Source: https://github.com/frontkom/design/blob/main/logo-frontkom-on-dark.svg
-- `assets/logo-frontkom-symbol-outlined.svg`: outlined version of the symbol
-  only (no wordmark). Use it to close a space at the edge of a composition
-  (brand book 3.0 p. 23). `viewBox="0 0 110 107"`.
-  Source: https://github.com/frontkom/design/blob/main/logo-frontkom-symbol-outlined.svg
+- `assets/logo-frontkom-symbol.svg`: the symbol only (no wordmark) in
+  charcoal, for **light backgrounds**. For avatars and other places where
+  the full logo is too small to read (see Avatars).
+  Source: https://github.com/frontkom/design/blob/main/logo-frontkom-symbol.svg
+- `assets/logo-frontkom-symbol-on-dark.svg`: the symbol only (no wordmark)
+  in white, for **indigo / dark backgrounds**.
+  Source: https://github.com/frontkom/design/blob/main/logo-frontkom-symbol-on-dark.svg
 
 Pick the file that matches the background and use case; do not invert at runtime.
 
@@ -949,7 +952,8 @@ The system is **flat**. No drop shadows. Depth comes from:
    logo is on the other side, as on a cover, the mark can also run past
    the bottom edge. On wide formats such as 16:9 slides, scale it to
    about the frame height instead (around 1120 px wide on 1920 × 1080).
-   Four variants:
+   Keep the mark below 3:1 against its background. Never place text
+   inside it, and never use it in place of the logo. Four variants:
    - **Positive**: `grey-light` `#E8E7EC` on `muted` `#F7F7F8`, 1.15:1.
      Light web sections and documents on `muted`.
    - **On white**: `grey-light` `#E8E7EC` on `background`, 1.23:1.
@@ -958,12 +962,6 @@ The system is **flat**. No drop shadows. Depth comes from:
      Chapter openers and closing slides.
    - **On the gradient**: white at 50% opacity, 1.74:1 to 2.95:1 across
      the ramp. Social banners and ads on a gradient surface.
-   Keep the mark below 3:1 against its background. Never place text
-   inside it, and never use it in place of the logo.
-5. **Outlined symbol** (brand book 3.0 p. 23). The symbol can also be
-   used as an outline, to close a space at the edge of a composition.
-   It is an option, never a required element: no page type, cover
-   included, has to carry it.
 
 Indigo tints are made by **lightening along the hue, not by mixing in a
 neutral.** `#22006C` keeps green at zero like `#1A0054`, so it stays
@@ -1383,10 +1381,9 @@ Composition rules:
   edge around x = 1060, top 180 px above the slide, so it runs past the
   top and right edges and ends around y = 880, above the logo's clear
   space. Clear of the heading.
-- Charcoal Frontkom wordmark logo bottom-right (small, sitting on top
-  of or near the outlined symbol)
+- Charcoal Frontkom wordmark logo bottom-right
 
-Use `slide-statement` and combine with the outlined symbol asset.
+Use `slide-statement`.
 
 #### 5. Closing / CTA slide
 
@@ -1563,8 +1560,8 @@ that means something with a label, or give it an accessible name.
 Interactive targets are at least 24px, and 44px on touch (brand book
 3.0 p. 25).
 
-**The symbol is not an icon.** The Frontkom mark and the outlined
-symbol are brand elements. They never enter the icon set,
+**The symbol is not an icon.** The Frontkom logo and the symbol are
+brand elements. They never enter the icon set,
 and an icon never stands in for the logo.
 
 ## Avatars
@@ -1605,6 +1602,8 @@ Retired, kept here so no one re-introduces them:
 - **The Frontkom Experience lockup.** Discontinued, no successor.
 - **The bracket bullet** (`shape/fill/bracket`) from the 2021 book.
   Bullets are plain.
+- **The outlined symbol** (`logo-frontkom-symbol-outlined.svg`). Removed
+  from the brand book. Use the filled symbol as a watermark instead.
 - **Text over photo** treatments (overlay, scrim). Replaced by "No text
   on photos".
 - **The outline display lettering** from the 2021 cover. Replaced by
@@ -1628,8 +1627,8 @@ Retired, kept here so no one re-introduces them:
   `#000000`.
 - **Do** verify any new component combination against WCAG AA by
   running `npx @google/design.md lint` on this file.
-- **Don't** add drop shadows. Depth is contrast, radius, and outlined
-  off-canvas symbol elements.
+- **Don't** add drop shadows. Depth is contrast, radius, and the
+  symbol as a watermark.
 - **Don't** give a card, box, callout or note a coloured edge on one
   side (top stripe, left stripe). A box has one colour, its fill. See
   Shapes / Card and box edges.
