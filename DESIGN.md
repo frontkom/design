@@ -400,6 +400,30 @@ components:
 
 # Frontkom Design System
 
+## Documents: read this before making any document
+
+These rules hold for every proposal, estimate, report or other document,
+whatever the format: Google Docs, HTML, PDF or Word.
+
+- Google Docs is the default. Copy the Frontkom template and fill it in
+  (see Layout / Documents and PDFs (A4)). Make a PDF only when asked.
+- **Always ask first, before copying the template or writing anything:**
+  should the document use coloured cards in the profile colours (card
+  colours) for key points, or only running text and tables? Ask this even
+  when the request is detailed, gives prices, tables and a schedule, or
+  asks you to just make it. A detailed request is not an answer to this
+  question. Skip it only when the person has named cards, boxes or
+  coloured fields, or said plain text only, in this conversation. Use
+  the ask_user_input tool with two options when it is available, then
+  stop and wait for the answer. Build what they choose.
+- A4 portrait. Margins 20 mm left, right and top, 22 mm bottom. Never US
+  Letter, never 1 inch margins.
+- Weights 400 and 500 only. Headings in Red Hat Display Medium (500),
+  body text in Red Hat Text Regular (400). Never bold (700).
+- Tables without black borders: 1px `grey-light` lines and the header
+  row on `muted`.
+- No thin divider lines. Open items as plain text: "[fylles inn]".
+
 ## Logo usage: read this before generating any visual
 
 The Frontkom wordmark is `assets/logo-frontkom.svg`
@@ -880,14 +904,113 @@ arrow for wide formats, rounded square for narrow vertical formats.
 
 ### Documents and PDFs (A4)
 
-Applies to proposals, estimates, reports and any other document
-generated as PDF.
+Applies to proposals, estimates, reports and any other document,
+whatever the format: Google Docs, HTML, PDF or Word.
 
-- **Page:** A4 portrait. Margins 20 mm left, right and top, 22 mm
-  bottom (room for the page number).
-- **Cover:** no page margin, so the `gradient-bar` reaches the top
-  edge. Content on the cover keeps the same 20 mm left edge as the rest
-  of the document.
+**Default format.** Make documents as Google Docs unless the person asks
+for another format. Google Docs is where Frontkom comments on and edits
+documents together. Make a PDF when the person asks for one, for example
+as the final version to send to a client, and build it from the approved
+text. If Google Drive is not connected, say so and offer a PDF instead.
+
+**Rules for every format:**
+
+- **Page:** A4 portrait. Margins 20 mm left, right and top, 22 mm bottom
+  (room for the page number). Never US Letter, never 1 inch margins.
+- **Page numbers and footers** sit inside the bottom margin, at least
+  10 mm from the paper edge, so printers do not cut them.
+- **Type:** headings in Red Hat Display Medium (500), body text in Red Hat
+  Text Regular (400), emphasis in Red Hat Text Medium (500). No other
+  weights, and never bold (700).
+- **Tables:** no black borders. 1px `grey-light` lines between rows, and
+  the header row on `muted`.
+- **Lines:** no thin divider lines under titles or between sections.
+  Table lines are the only lines.
+- **Open items:** write them as plain text in square brackets, for example
+  "Tid og sted: [fylles inn]". No tags, badges, pills or colour.
+
+#### Google Docs
+
+- **Start from the template.** Copy the Google Docs template with the
+  Drive connector (`copy_file`, file ID
+  `1tBIM4kBj65EgiBd5NOtpJ3Wja4Uif8fTgbHv3WdMkMs`) and fill in the copy.
+  Never build a Frontkom document in an empty Doc. The template already
+  holds A4, the margins, the logo in the header, the `gradient-bar` on the
+  first page only, page numbers from page 2, and the named styles.
+- **Use the named styles.** Title, Subtitle, Heading 1 to 6 and Normal
+  text are set to the right fonts, weights and colours. Apply them with
+  `namedStyleType`; do not set fonts or colours paragraph by paragraph.
+  Never set `bold: true`: it gives 700. For emphasis in running text, use
+  `weightedFontFamily` with weight 500.
+- **Tables:** every table gets exactly this style, nothing else. Insert
+  and fill the table first, then send these three requests in one batch
+  (`T` is the table's start index):
+
+```json
+{"updateTableCellStyle": {"tableStartLocation": {"index": T},
+  "tableCellStyle": {
+    "borderTop":    {"color": {"color": {"rgbColor": {"red": 0.9098, "green": 0.9059, "blue": 0.9255}}}, "width": {"magnitude": 0.75, "unit": "PT"}, "dashStyle": "SOLID"},
+    "borderBottom": {"color": {"color": {"rgbColor": {"red": 0.9098, "green": 0.9059, "blue": 0.9255}}}, "width": {"magnitude": 0.75, "unit": "PT"}, "dashStyle": "SOLID"},
+    "borderLeft":   {"color": {"color": {"rgbColor": {"red": 0.9098, "green": 0.9059, "blue": 0.9255}}}, "width": {"magnitude": 0.75, "unit": "PT"}, "dashStyle": "SOLID"},
+    "borderRight":  {"color": {"color": {"rgbColor": {"red": 0.9098, "green": 0.9059, "blue": 0.9255}}}, "width": {"magnitude": 0.75, "unit": "PT"}, "dashStyle": "SOLID"},
+    "paddingTop": {"magnitude": 5, "unit": "PT"}, "paddingBottom": {"magnitude": 5, "unit": "PT"},
+    "paddingLeft": {"magnitude": 6, "unit": "PT"}, "paddingRight": {"magnitude": 6, "unit": "PT"}},
+  "fields": "borderTop,borderBottom,borderLeft,borderRight,paddingTop,paddingBottom,paddingLeft,paddingRight"}}
+{"updateTableCellStyle": {"tableRange": {"tableCellLocation": {"tableStartLocation": {"index": T}, "rowIndex": 0, "columnIndex": 0}, "rowSpan": 1, "columnSpan": COLUMNS},
+  "tableCellStyle": {"backgroundColor": {"color": {"rgbColor": {"red": 0.9686, "green": 0.9686, "blue": 0.9725}}}},
+  "fields": "backgroundColor"}}
+{"updateTextStyle": {"range": {"startIndex": HEADER_ROW_START, "endIndex": HEADER_ROW_END},
+  "textStyle": {"weightedFontFamily": {"fontFamily": "Red Hat Text", "weight": 500}},
+  "fields": "weightedFontFamily"}}
+```
+
+  Add a fourth request so no row is split across two pages:
+
+```json
+{"updateTableRowStyle": {"tableStartLocation": {"index": T},
+  "tableRowStyle": {"preventOverflow": true}, "fields": "preventOverflow"}}
+```
+
+  That gives `grey-light` `#E8E7EC` lines on all cells, the header row on
+  `muted` `#F7F7F8` with its text in Red Hat Text Medium, and the body
+  rows in Normal text. Never give the header row any other colour (not
+  indigo, not orange, not a darker grey), never use bold, and never leave
+  the default black borders.
+- **Card colours (only when the person asked for them):** a group of
+  cards is one table with three columns: card, an 11 pt spacer column,
+  card. Two rows of cards get an empty spacer row between them. Content
+  width is 481.9 pt, so the card columns are 235 pt each, fixed width.
+  - All cells: borders at width 0, padding 0, `contentAlignment: TOP`.
+  - Card cells: padding 14 pt top, 16 pt bottom, left and right, and
+    the pastel background. Fill in gradient order, left to right and top
+    to bottom: `pastel-rose` `#F7D6DF`, `pastel-magenta` `#F0CFEC`,
+    `pastel-purple` `#E4CEF4`, `pastel-blue` `#D9CDF9`.
+  - Card title: its own paragraph, Red Hat Display weight 500, **18 pt**,
+    in the card's parent hue: `#DA446E`, `#BC25A9`, `#861FCB`, `#521CE4`.
+    Paragraph spacing below 6 pt, line spacing 110. 18 pt is the minimum,
+    because rose and magenta only pass as large text.
+  - Card body: Normal text, `#35323C`.
+  - Spacer row: its empty paragraphs at 6 pt, line spacing 100, no space
+    above or below.
+  - Space above the group: set `spaceBelow` 14 pt on the paragraph
+    before the table. Never an empty paragraph.
+  - Add `preventOverflow` to the rows, as for other tables.
+  - Google Docs cannot round corners. The cards stay square; say so if
+    the person asks for the PDF look.
+- **Spacing:** never add empty paragraphs for space, not before a table,
+  not between sections. The named styles hold the spacing. Insert a table
+  directly after the paragraph that introduces it.
+- **Cover:** white, with the content left-aligned. Google Docs cannot give
+  one page a dark background, so the full indigo cover is for PDF only.
+- **Header images:** the logo and the bar are images fixed to the page in
+  the header. Do not try to replace or move them through the API; it
+  cannot reach them.
+
+#### HTML and PDF
+
+- **Cover:** no page margin, so the `gradient-bar` reaches the top edge.
+  Content on the cover keeps the same 20 mm left edge as the rest of
+  the document.
 - **Set margins on the page with `@page`, never as padding on a
   wrapper.** Padding only applies where the element starts, not on
   every new page, so every page after the cover loses its margin.
@@ -1230,6 +1353,17 @@ each color representing one phase of a project lifecycle.
   per page (one website sub-page, one catalogue page, one slide). Use in
   slide decks and editorial documents, where gradient headings are not
   used.
+  - **Orange is the core of the message.** Highlight the words that
+    carry what is new or most important. Test: read only the orange
+    words. They must make sense on their own and say what the page is
+    about. "Sju spor for å **eie KI** i Hesselberg" passes; "Målet for
+    **timen**" does not.
+  - **Never small words or a random part of a phrase.** Prepositions,
+    articles and the end of a sentence are not highlighted just because
+    they come last.
+  - **When in doubt, use one colour.** Headings that work as labels
+    ("Målet for timen", "Hvem gjør hva", "Dette bestemmer vi i dag")
+    stay in one colour.
 
 ## Slides & presentations
 
@@ -1671,6 +1805,14 @@ Retired, kept here so no one re-introduces them:
   AA as normal text on white and is not a web button color, so reserve it
   for large display headings, the gradient, and accents, not body text or
   UI. Never as a button fill, on web or slides.
+- **Don't** use `brand` orange as the background of cards, panels, boxes
+  or any other surface, in presentations, documents or on web. Orange is
+  the accent colour; on a large surface it outweighs everything around
+  it. Surfaces are white, `muted`, `indigo`, the gradient where it is
+  allowed, and the card colours. Exceptions: avatars and small elements
+  such as the `decorative-stripe` and the dots in a process line. To
+  make one card stand out (for example "Start her"), give it an `indigo`
+  surface with white text and keep the other cards light.
 - **Don't** use the `logo-frame-*`, `poster-title`, or `gradient-bar`
   components on web. `gradient-bar` is for covers of every kind,
   chapter and closing slides, posters and ads; the others are for
@@ -1697,7 +1839,9 @@ Retired, kept here so no one re-introduces them:
 - **Do** place the Frontkom logo bottom-right on every content slide.
   The position is non-negotiable.
 - **Do** use `signature-highlight` (single orange phrase) for emphasis
-  on slides: brand book p. 11: one highlighted phrase per page.
+  on slides when one phrase carries the message: brand book p. 11: at
+  most one highlighted phrase per page. It is a choice per heading, not
+  a rule for every heading. See the rules under Editorial mode.
 - **Do** set statement slides on white with the watermark in
   `grey-light` (`watermark-on-white`).
 - **Do** use the canonical quote treatment in slides too: opening
