@@ -1129,8 +1129,8 @@ boxes, callouts, notes and text blocks on web, slides and documents.
 - To show sequence or category, use the card colours or the process
   step markers, not coloured edges.
 - Lines that are content stay: table lines (`divider`), a timeline axis
-  and the `gradient-bar` on the top edge of covers, chapter and closing
-  slides. They are not edges on a box.
+  and the `gradient-bar` on the top edge of covers and chapter slides.
+  They are not edges on a box.
 
 ## Components
 
@@ -1215,7 +1215,7 @@ to reach"). The gradient replaces italics and underline as emphasis.
 
 A thin horizontal stripe of the full 5-stop gradient, used as a
 decorative border along the **top edge only** of every cover, and of
-chapter and closing slides, posters and ads. Not on web sections.
+chapter slides, posters and ads. Not on web sections or closing slides.
 
 **Every cover takes the bar**, whatever the format: presentations,
 documents, reports, proposals, PDFs, brochures, case studies and the
@@ -1383,9 +1383,29 @@ so the deck is neither all indigo nor all white.
 - **Indigo:** text in white.
 - **White:** headings in `indigo`, body text in `foreground` #35323C.
 
+### Presentation templates
+
+Start every deck from the Frontkom presentation template. It holds the
+six layouts below with the background, logo, gradient bar and
+watermark built in, and one example slide per layout.
+
+- **Google Slides:** https://docs.google.com/presentation/d/1krRmYz-v39b8QHGOTwuK0mqCsGJHB9ZGTL07mEOxR2Q/edit (file ID
+  `1krRmYz-v39b8QHGOTwuK0mqCsGJHB9ZGTL07mEOxR2Q`). Copy it with the
+  Drive connector (`copy_file`) and fill in the copy. Google Slides
+  cannot set text in a gradient, so the cover title there is solid
+  `brand` orange, the fallback named under `hero-gradient`.
+- **PowerPoint:** https://drive.google.com/file/d/1OikPM88nWut90wfVfCRgy92uwj0qtsIf/view. Titles use the font name
+  "Red Hat Display Medium", so the static Red Hat fonts must be
+  installed: `RedHatDisplay-Medium.ttf`, `RedHatText-Regular.ttf` and
+  `RedHatText-Medium.ttf`. With only the variable fonts installed,
+  PowerPoint falls back to Calibri.
+
+When building a .pptx in code, recreate the same six layouts with the
+same names, positions and fixed elements.
+
 ### Slide layouts in the .pptx theme
 
-The three canonical layouts must exist as **real layouts in the
+The six canonical layouts must exist as **real layouts in the
 deck's theme** (slide masters), not as formatting applied to individual
 slides. A deck where indigo is painted per-slide breaks the moment
 someone inserts a new slide or copies one into another file: they get a
@@ -1398,11 +1418,12 @@ white canvas and have to rebuild the brand by hand.
 | `Frontkom lys side` | `slide-content-light` | `background` (white) | Charcoal logo bottom-right |
 | `Frontkom utsagn` | `slide-statement` | `background` (white) | Watermark in `grey-light`; charcoal logo bottom-right; title placeholder at `h1` size |
 | `Frontkom kapittel` | `slide-chapter-divider` | `indigo` | Gradient bar, top edge; no logo |
+| `Frontkom avslutning` | `slide-content` | `indigo` | White logo bottom-right; title and contact placeholders near the vertical middle; no gradient bar |
 
-Closing / CTA slides build on `Frontkom mørk side`. Chapter dividers and
-statement slides need their own layouts: a chapter divider has no logo,
-and a statement title is larger than the title placeholder on a content
-slide.
+Chapter dividers, statement and closing slides need their own layouts:
+a chapter divider has no logo, a statement title is larger than the
+title placeholder on a content slide, and the closing slide centres its
+text vertically.
 
 **Background and logo live on the layout, never on the slide.** This is
 what makes duplication and insertion safe, and it's the only way the
@@ -1415,6 +1436,7 @@ Placeholders per layout:
 - `Frontkom lys side`: title
 - `Frontkom utsagn`: title
 - `Frontkom kapittel`: title
+- `Frontkom avslutning`: title, contact details
 
 #### Two rules that are easy to get wrong
 
@@ -1446,7 +1468,7 @@ Five canonical slide types cover almost every deck:
 #### 1. Cover slide
 
 The first slide. Indigo canvas with **a gradient bar on the top edge**
-(also used on chapter and closing slides). Centered or left-aligned
+(also used on chapter slides). Centered or left-aligned
 composition with:
 
 - The slide title in `h1`, white (`on-dark`), or in `hero-gradient` at
@@ -1521,11 +1543,12 @@ Use `slide-statement`.
 
 #### 5. Closing / CTA slide
 
-A final slide with a call to action ("Let's talk", "Reach out today").
-Indigo canvas, large heading and supporting text in white, and a single
-`button-on-dark` CTA. Logo bottom-right.
+A final slide ("Thank you", "Let's talk"). Indigo canvas, the title at
+`h1` in white with contact details below it, both placed near the
+vertical middle of the slide. Logo bottom-right. No gradient bar. A
+single `button-on-dark` CTA may follow the contact details.
 
-Use `slide-content` with CTA composition.
+Use the `Frontkom avslutning` layout.
 
 ### Layout patterns
 
@@ -1646,8 +1669,8 @@ Red Hat Display Medium (500), as on the web.
   emphasis elsewhere. A cover title in the gradient has no orange
   phrase.
 - They don't use the `decorative-stripe` (web flourish). The
-  `gradient-bar` appears on the top edge of cover, chapter and closing
-  slides only, never on content slides.
+  `gradient-bar` appears on the top edge of cover and chapter slides
+  only, never on content or closing slides.
 - They don't use `card-light` or `card-dark` web cards. Use the card
   colours (`card-rose`, `card-magenta`, `card-purple`, `card-blue`), white
   or `muted` instead.
@@ -1815,8 +1838,7 @@ Retired, kept here so no one re-introduces them:
   surface with white text and keep the other cards light.
 - **Don't** use the `logo-frame-*`, `poster-title`, or `gradient-bar`
   components on web. `gradient-bar` is for covers of every kind,
-  chapter and closing slides, posters and ads; the others are for
-  advertising.
+  chapter slides, posters and ads; the others are for advertising.
 
 ### Advertising-specific
 
@@ -1869,8 +1891,8 @@ Retired, kept here so no one re-introduces them:
   lower third there, aligned with the title (not centered under a
   left-aligned title).
 - **Don't** use `decorative-stripe` (web) on slides, or `gradient-bar`
-  on content slides. The gradient bar appears on cover, chapter and
-  closing slides, on the **top edge only**, never the bottom.
+  on content or closing slides. The gradient bar appears on cover and
+  chapter slides, on the **top edge only**, never the bottom.
 - **Don't** use the card colours (`pastel-rose`, `pastel-magenta`,
   `pastel-purple`, `pastel-blue`) on web. They're for presentations and
   documents only.
